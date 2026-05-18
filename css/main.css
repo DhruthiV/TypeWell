@@ -1,0 +1,117 @@
+/* Typing Font */
+@font-face {
+  font-family: "TypingFont";
+  src: url("../assets/fonts/JetBrainsMono-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+/* Main Font */
+@font-face {
+  font-family: "MainFont";
+  src: url("../assets/fonts/Inter_18pt-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+:root {
+  --bg: #f5f5f0;
+  --surface: #ffffff;
+  --border: #e0ded8;
+  --text: #1a1a18;
+  --muted: #888680;
+  --accent: #2563eb;
+  --error: #dc2626;
+  --success: #16a34a;
+}
+
+body {
+  font-family: "MainFont";
+  background-color: var(--bg);
+  height: 100dvh;
+  width: 100dvw;
+}
+
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+}
+
+.mode-section {
+  margin: 0rem 1rem;
+  padding: 1rem 2rem;
+}
+
+.modes {
+  padding: 0.25rem;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  font-size: small;
+}
+
+/* typing section */
+#typing-section {
+  max-width: 860px;
+  margin: 2rem auto;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.timer-track {
+  width: 100%;
+  height: 3px;
+  background-color: var(--border);
+}
+
+.timer-fill {
+  width: 100%;
+  height: 3px;
+  background-color: var(--accent);
+}
+
+.passage-card {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: "TypingFont";
+}
+
+#passage-content {
+  color: var(--muted);
+}
+
+.active {
+  border-left: 2px solid var(--accent);
+  animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+  0% {
+    border-color: var(--accent);
+  }
+  50% {
+    border-color: transparent;
+  }
+  100% {
+    border-color: var(--accent);
+  }
+}
+.correct {
+  color: var(--text);
+}
+
+.incorrect {
+  color: var(--error);
+}
+
+footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 1rem 2rem;
+}
