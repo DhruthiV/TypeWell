@@ -29,12 +29,21 @@
         <div class="passage-options">
           <!-- Increase and Decrease Font Size -->
           <div>
-            <button>A</button>
-            <button>a</button>
+            <button id="increase-font">A</button>
+            <button id="decrease-font">a</button>
+            <span id="font-size-display"></span>
           </div>
+
           <!-- Refresh Passage -->
           <div>
-            <button id="refresh-button">Refresh</button>
+            <!-- Restart the test when the refresh is clicked -->
+            <button
+              id="refresh-button"
+              title="Refresh the passage"
+              onclick="resetTest(true)"
+            >
+              <img src="./assets/icons/refreshIcon.svg" alt="Refresh Passage" />
+            </button>
           </div>
         </div>
 
