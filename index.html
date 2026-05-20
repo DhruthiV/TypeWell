@@ -13,22 +13,47 @@
       <nav>
         <div class="logo"><span>TypeWell</span></div>
         <div class="mode-section">
-          <button class="modes">15s</button>
-          <button class="modes">30s</button>
-          <button class="modes">60s</button>
-          <button class="modes">25w</button>
-          <button class="modes">50w</button>
+          <button class="modes" data-mode="60s">60s</button>
+          <button class="modes" data-mode="120s">120s</button>
+          <button class="modes" data-mode="25w">25w</button>
+          <button class="modes" data-mode="50w">50w</button>
+          <button class="modes" data-mode="100w">100w</button>
         </div>
       </nav>
     </header>
     <section id="typing-section">
-      <div class="timer-track">
-        <div class="timer-fill"></div>
+      <div class="progress-track">
+        <div class="progress-fill"></div>
       </div>
-      <div class="passage-card"><div id="passage-content"></div></div>
+      <div class="passage-card">
+        <div class="passage-options">
+          <!-- Increase and Decrease Font Size -->
+          <div>
+            <button>A</button>
+            <button>a</button>
+          </div>
+          <!-- Refresh Passage -->
+          <div>
+            <button id="refresh-button">Refresh</button>
+          </div>
+        </div>
+
+        <!-- ACTUAL CONTENT TO TYPE -->
+        <div id="passage-content"></div>
+
+        <div class="countdown">
+          <!-- Countdown default is 25 words -->
+          <div id="countdown-timer"></div>
+          <div id="count-words"></div>
+        </div>
+      </div>
     </section>
-    <footer>Tab + Enter — restart | Esc — reset</footer>
+    <footer>
+      <div class="commands">Tab+Enter = restart | Esc = reset</div>
+    </footer>
+    <script src="js/passages.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/timer.js"></script>
+    <script src="js/engine.js"></script>
   </body>
-  <script src="js/passages.js"></script>
-  <script src="js/engine.js"></script>
 </html>

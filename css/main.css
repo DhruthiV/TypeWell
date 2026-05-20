@@ -22,6 +22,8 @@
   --accent: #2563eb;
   --error: #dc2626;
   --success: #16a34a;
+  --selected: #4a80f5;
+  --text2: #ffffff;
 }
 
 body {
@@ -50,24 +52,30 @@ nav {
   font-size: small;
 }
 
+.mode-selected {
+  background-color: var(--selected);
+  color: var(--text2);
+}
+
 /* typing section */
 #typing-section {
   max-width: 860px;
-  margin: 2rem auto;
+  margin: 1rem auto;
   background-color: var(--surface);
   border: 1px solid var(--border);
 }
 
-.timer-track {
+.progress-track {
   width: 100%;
   height: 3px;
   background-color: var(--border);
 }
 
-.timer-fill {
-  width: 100%;
+.progress-fill {
+  width: 0%;
   height: 3px;
   background-color: var(--accent);
+  transition: width 1s linear;
 }
 
 .passage-card {
@@ -75,6 +83,15 @@ nav {
   margin: 0 auto;
   padding: 2rem;
   font-family: "TypingFont";
+}
+
+.passage-options {
+  width: 100%;
+  margin: auto 0;
+  padding: 1rem 0rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 #passage-content {
@@ -105,6 +122,12 @@ nav {
   color: var(--error);
 }
 
+.countdown {
+  display: flex;
+  padding: 1rem 0rem;
+  justify-content: flex-end;
+}
+
 footer {
   display: flex;
   align-items: center;
@@ -114,4 +137,9 @@ footer {
   left: 0;
   width: 100%;
   padding: 1rem 2rem;
+}
+
+.commands {
+  font-family: "TypingFont";
+  color: var(--muted);
 }
