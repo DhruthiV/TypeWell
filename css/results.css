@@ -1,0 +1,75 @@
+@import "./main.css";
+
+.result-data {
+  font-family: "TypingFont";
+}
+
+#results-main {
+  margin: 0rem 1rem;
+  padding: 1rem 2rem;
+}
+#hero-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.wpm-display {
+  display: flex;
+}
+
+#result-wpm {
+  font-size: 4rem;
+}
+
+#result-mode {
+  color: var(--muted);
+}
+
+#stats-section {
+  margin: 2rem auto;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.stat-card {
+  margin: 1rem auto;
+  padding: 2rem;
+  max-width: 250px;
+
+  width: 200px;
+  border: 1px solid var(--muted);
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.stat-card div {
+  display: inherit;
+  align-content: start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.stat-info {
+  align-self: flex-end;
+  overflow-wrap: break-word;
+}
+
+.stat-label {
+  font-size: 18px;
+}
+
+.stat-value {
+  font-size: 18px;
+  /* font-weight: 600; */
+  color: var(--text);
+}
+
+footer {
+  position: relative;
+}
