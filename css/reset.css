@@ -25,6 +25,10 @@ button:focus {
   outline: none;
 }
 
+button:disabled {
+  color: var(--muted);
+}
+
 img {
   max-width: 100%;
   display: block;

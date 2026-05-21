@@ -1,3 +1,4 @@
+@import "./reset.css";
 /* Typing Font */
 @font-face {
   font-family: "TypingFont";
@@ -19,6 +20,7 @@
   --border: #e0ded8;
   --text: #1a1a18;
   --muted: #888680;
+  --muted2: #cbcac3;
   --accent: #2563eb;
   --error: #dc2626;
   --success: #16a34a;
@@ -27,7 +29,11 @@
 }
 
 body {
-  font-family: "MainFont";
+  font-family:
+    "MainFont",
+    system-ui,
+    -apple-system,
+    sans-serif;
   background-color: var(--bg);
   height: 100dvh;
   width: 100dvw;
@@ -82,7 +88,7 @@ nav {
   max-width: 800px;
   margin: 0 auto;
   padding: 2rem;
-  font-family: "TypingFont";
+  font-family: "TypingFont", "Courier New", Courier, monospace;
 }
 
 .passage-options {
@@ -92,6 +98,41 @@ nav {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+}
+
+#increase-font {
+  font-size: 24px;
+  color: var(--accent);
+}
+
+#increase-font:disabled,
+#decrease-font:disabled {
+  color: var(--muted);
+}
+
+#decrease-font {
+  font-size: 20px;
+  color: var(--accent);
+}
+#font-size-display {
+  font-size: 14px;
+  font-family: "MainFont";
+  color: var(--muted2);
+}
+
+#refresh-button {
+  width: 24px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#refresh-button img {
+  width: 24px;
+  height: 24px;
+  filter: brightness(0) saturate(100%) invert(44%) sepia(0%) saturate(7427%)
+    hue-rotate(157deg) brightness(122%) contrast(77%);
 }
 
 #passage-content {
