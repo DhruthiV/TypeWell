@@ -14,6 +14,11 @@ import {
   MAX_FONTSIZE,
   MIN_FONTSIZE,
 } from "./utils.js";
+import {
+  storeItemToStorage,
+  removeItemFromStorage,
+  storeHistory,
+} from "./storage.js";
 
 let timerStarted = false; //for time based mode
 let testComplete = false;
@@ -175,7 +180,8 @@ function endTest() {
   //stop the timer - user types last char
   clearTimer();
   const snapshot = tracker.getSnapshot(currentMode);
-  localStorage.setItem("latestResult", JSON.stringify(snapshot));
+  storeItemToStorage("latestResult", snapshot);
+  storeHistory("testHistory", snapshot);
   window.location.href = "results.html";
 }
 
@@ -198,7 +204,7 @@ function resetTest(newPassage) {
   } else {
     updateModeDisplay(timerElement, wordElement, "", currentMode, 0);
   }
-  localStorage.removeItem("latestResult");
+  removeItemFromStorage("latestResult");
 
   if (newPassage) {
     currentPassage = getRandomPassage();

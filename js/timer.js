@@ -1,20 +1,28 @@
 import { currentMode, timerElement, updateProgressBar } from "./utils.js";
+import { sampleWpm } from "./tracker.js";
 let originalTime = 0;
-let totalTime = 0;
+let totalTimeRemaining = 0;
 let timerInterval = null;
 
 export function startTimer(onComplete) {
   originalTime = Number(currentMode.slice(0, -1));
-  totalTime = originalTime;
+  totalTimeRemaining = originalTime;
 
   timerInterval = setInterval(() => {
-    totalTime -= 1;
+    totalTimeRemaining -= 1;
 
-    updateProgressBar(totalTime, originalTime);
+    updateProgressBar(totalTimeRemaining, originalTime);
 
-    timerElement.textContent = totalTime + "s";
+    timerElement.textContent = totalTimeRemaining + "s";
 
-    if (totalTime === 0) {
+    if (
+      (originalTime - totalTimeRemaining) % 5 == 0 &&
+      originalTime - totalTimeRemaining != 0
+    ) {
+      sampleWpm(); //calculate the wpm every 5 seconds for graph history
+    }
+
+    if (totalTimeRemaining === 0) {
       clearTimer();
       timerElement.textContent = "";
       onComplete();
@@ -28,5 +36,5 @@ export function clearTimer() {
 
 export function resetTimerMode() {
   originalTime = 0;
-  totalTime = 0;
+  totalTimeRemaining = 0;
 }

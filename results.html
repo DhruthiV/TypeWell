@@ -21,10 +21,10 @@
       <!-- Hero WPM -->
       <section id="hero-section">
         <div class="wpm-display">
-          <span id="result-wpm" class="result-data">343</span>
+          <span id="result-wpm" class="result-data"></span>
           <span class="wpm-label">WPM</span>
         </div>
-        <div class="mode-badge" id="result-mode">45w</div>
+        <div class="mode-badge" id="result-mode"></div>
       </section>
 
       <!-- Stat Cards -->
@@ -34,56 +34,58 @@
             <div class="stat-label">Accuracy</div>
             <div class="stat-info">i</div>
           </div>
-          <div class="stat-value result-data" id="result-accuracy">34</div>
+          <div class="stat-value result-data" id="result-accuracy"></div>
         </div>
         <div class="stat-card">
           <div>
             <div class="stat-label">Correct Chars</div>
             <div class="stat-info">i</div>
           </div>
-          <div class="stat-value result-data" id="result-correct">234</div>
+          <div class="stat-value result-data" id="result-correct"></div>
         </div>
         <div class="stat-card">
           <div>
             <div class="stat-label">Wrong Characters</div>
             <div class="stat-info">i</div>
           </div>
-          <div class="stat-value result-data" id="result-wrong">234</div>
+          <div class="stat-value result-data" id="result-wrong"></div>
         </div>
         <div class="stat-card">
           <div>
             <div class="stat-label">Backspaces</div>
             <div class="stat-info">i</div>
           </div>
-          <div class="stat-value result-data" id="result-backspaces">234</div>
+          <div class="stat-value result-data" id="result-backspaces"></div>
         </div>
         <div class="stat-card">
           <div>
             <div class="stat-label">Total Keystrokes</div>
             <div class="stat-info">i</div>
           </div>
-          <div class="stat-value result-data" id="result-keystrokes">24</div>
+          <div class="stat-value result-data" id="result-keystrokes"></div>
         </div>
         <div class="stat-card">
           <div>
             <div class="stat-label">Time</div>
             <div class="stat-info">i</div>
           </div>
-          <div class="stat-value result-data" id="result-time">4</div>
+          <div class="stat-value result-data" id="result-time"></div>
         </div>
       </section>
 
-      <!-- WPM Graph -->
-      <section id="graph-section">
-        <div class="section-title">WPM over time</div>
-        <canvas id="wpm-graph"></canvas>
-      </section>
+      <div class="visual-row">
+        <!-- WPM Graph -->
+        <section id="graph-section">
+          <div class="section-title">WPM over time</div>
+          <canvas id="wpm-graph"></canvas>
+        </section>
 
-      <!-- Keyboard Heatmap -->
-      <section id="heatmap-section">
-        <div class="section-title">Key error heatmap</div>
-        <div id="keyboard-heatmap"></div>
-      </section>
+        <!-- Keyboard Heatmap -->
+        <section id="heatmap-section">
+          <div class="section-title">Key error heatmap</div>
+          <div id="keyboard-heatmap"></div>
+        </section>
+      </div>
 
       <!-- History -->
       <section id="history-section">
@@ -93,17 +95,16 @@
 
       <!-- Actions -->
       <section id="actions-section">
-        <button id="btn-try-again">Try Again</button>
+        <button id="btn-try-again">
+          Try Again
+          <img src="./assets/icons/refreshIcon.svg" alt="" srcset="" />
+        </button>
         <button id="btn-drill">Drill Weak Keys</button>
         <button id="btn-download">Download Report</button>
       </section>
     </main>
 
     <footer>Temporary words here will change this part</footer>
-
-    <script src="js/storage.js"></script>
-    <script src="js/keyboard.js"></script>
-    <script src="js/report.js"></script>
-    <script src="js/results.js"></script>
+    <script type="module" src="./js/results.js"></script>
   </body>
 </html>

@@ -1,8 +1,11 @@
+import { storeHistory } from "./storage.js";
+
 let correctChar = 0;
 let wrongChar = 0;
 let backspaceCount = 0;
 let keystrokeLog = []; // { expected, typed, correct, time }
 let keyErrorMap = {}; //{ 'r': { attempts: 10, errors: 3 } }
+let wpmHistory = [];
 let testStartTime = null;
 
 export function recordTestStart(time) {
@@ -41,6 +44,14 @@ export function recordBackspace() {
   backspaceCount++;
 }
 
+export function sampleWpm() {
+  const elapsedSeconds = (Date.now() - testStartTime) / 1000;
+  const elapsedMinutes = elapsedSeconds / 60;
+  const currentWpm =
+    elapsedMinutes > 0 ? Math.round(correctChar / 5 / elapsedMinutes) : 0;
+  wpmHistory.push({ second: Math.round(elapsedSeconds), wpm: currentWpm });
+}
+
 export function getSnapshot(mode) {
   const elapsedSeconds = (Date.now() - testStartTime) / 1000;
   const finalElapsedMinutes = elapsedSeconds / 60;
@@ -57,11 +68,14 @@ export function getSnapshot(mode) {
     wrongChars: wrongChar,
     totalKeyStroke: correctChar + wrongChar + backspaceCount,
     backspaceCount: backspaceCount,
+    duration: Math.round(elapsedSeconds),
     keyErrorMap: keyErrorMap,
     keystrokeLog: keystrokeLog,
     mode,
     timestamp: new Date().toISOString(),
+    wpmHistory: wpmHistory,
   };
+
   return snapshot;
 }
 
