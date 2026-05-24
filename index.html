@@ -37,11 +37,7 @@
           <!-- Refresh Passage -->
           <div>
             <!-- Restart the test when the refresh is clicked -->
-            <button
-              id="refresh-button"
-              title="Refresh the passage"
-              onclick="resetTest(true)"
-            >
+            <button id="refresh-button" title="Refresh the passage">
               <img src="./assets/icons/refreshIcon.svg" alt="Refresh Passage" />
             </button>
           </div>
@@ -60,9 +56,6 @@
     <footer>
       <div class="commands">Tab+Enter = restart | Esc = reset</div>
     </footer>
-    <script src="js/passages.js"></script>
-    <script src="js/utils.js"></script>
-    <script src="js/timer.js"></script>
-    <script src="js/engine.js"></script>
+    <script type="module" src="js/engine.js"></script>
   </body>
 </html>

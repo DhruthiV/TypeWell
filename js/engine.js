@@ -1,7 +1,57 @@
 //Timer
+import * as tracker from "./tracker.js";
+import { startTimer, resetTimerMode, clearTimer } from "./timer.js";
+import { passages } from "./passages.js";
+import {
+  currentMode,
+  setCurrentMode,
+  updateModeDisplay,
+  updateProgressBar,
+  timerElement,
+  wordElement,
+  currentSize,
+  updateFontSize,
+  MAX_FONTSIZE,
+  MIN_FONTSIZE,
+} from "./utils.js";
+
 let timerStarted = false; //for time based mode
-let testStartTime = null;
 let testComplete = false;
+
+// TEST MODE
+const modeButtons = document.querySelectorAll("button[data-mode]");
+
+const defaultModeButton = document.querySelector(
+  `button[data-mode = "${currentMode}"]`,
+);
+if (defaultModeButton) {
+  defaultModeButton.classList.add("mode-selected");
+  wordElement.textContent = currentMode;
+  timerElement.textContent = "";
+}
+
+modeButtons.forEach((button) =>
+  button.addEventListener("click", (event) => {
+    const clickedButton = event.currentTarget;
+
+    modeButtons.forEach((b) => b.classList.remove("mode-selected"));
+
+    clickedButton.classList.add("mode-selected");
+    setCurrentMode(clickedButton.dataset.mode);
+    const newMode = clickedButton.dataset.mode;
+    //When user changes mode mid-test reset the timer
+    if (timerStarted) {
+      resetTest(true); // changes the passage content when the mode is changed.
+    } else {
+      if (newMode.endsWith("s")) {
+        updateModeDisplay(timerElement, wordElement, newMode, "", 100);
+      } else {
+        updateModeDisplay(timerElement, wordElement, "", newMode, 0);
+      }
+    }
+    clickedButton.blur(); // remove button focus
+  }),
+);
 
 // PASSAGE CONTENT
 function getRandomPassage() {
@@ -11,6 +61,7 @@ function getRandomPassage() {
 let currentPassage = "";
 let characters = [];
 let spans = [];
+let currentIndex = 0;
 
 const passageContent = document.getElementById("passage-content");
 
@@ -32,16 +83,6 @@ function renderPassage(textToType) {
 currentPassage = getRandomPassage();
 renderPassage(currentPassage);
 
-document.addEventListener("keydown", checks);
-
-// Key Stroke insights variables
-let currentIndex = 0;
-let totalKeyStroke = 0;
-let accuracy = 0;
-let correctChar = 0;
-let wrongChar = 0;
-let backspaceCount = 0;
-
 const blockedKeys = [
   "Shift",
   "Control",
@@ -57,6 +98,32 @@ const blockedKeys = [
   "Delete",
 ];
 
+const handleBackspace = (currentSpan) => {
+  tracker.recordBackspace();
+  currentSpan.classList.remove("active");
+  currentIndex--;
+
+  const previousSpan = spans[currentIndex];
+  previousSpan.classList.remove("correct", "incorrect");
+  previousSpan.classList.add("active");
+};
+
+const markSpan = (span, result) => {
+  span.classList.add(result);
+};
+
+const updateCursor = () => {
+  const nextSpan = spans[currentIndex];
+  if (nextSpan) {
+    nextSpan.classList.add("active");
+  }
+};
+const checkCompletion = () => {
+  if (currentIndex === spans.length) {
+    endTest();
+  }
+};
+
 function checks(event) {
   // If the Test is completed - no need to listen to keyboard event
   if (testComplete) return;
@@ -67,85 +134,48 @@ function checks(event) {
 
   if (blockedKeys.includes(event.key)) return;
 
-  // Number of key presses for character
-  totalKeyStroke++;
-
   //Start the timer when user starts typing first keypress
   if (!timerStarted) {
-    console.log("startTimer called, currentMode:", currentMode);
-    startTimer();
     timerStarted = true;
-    testStartTime = Date.now();
+    //TIME BASED MODE
+    if (currentMode.endsWith("s")) {
+      startTimer(endTest);
+    }
+    //WORD BASED MODE
+    tracker.recordTestStart(Date.now());
   }
 
   // Backspace
   if (event.key == "Backspace" && currentIndex > 0) {
-    backspaceCount++;
-    currentSpan.classList.remove("active");
-    currentIndex--;
-
-    const previousSpan = spans[currentIndex];
-    previousSpan.classList.remove("correct", "incorrect");
-    previousSpan.classList.add("active");
-
+    handleBackspace(currentSpan);
     return;
   }
 
   // Normal typing
-  if (event.key === characters[currentIndex]) {
-    correctChar++;
-    currentSpan.classList.add("correct");
-  } else {
-    wrongChar++;
-    currentSpan.classList.add("incorrect");
-  }
-
-  if (totalKeyStroke != 0) {
-    accuracy = Math.round((correctChar / totalKeyStroke) * 100);
-  }
+  const result = tracker.recordKeystroke(characters[currentIndex], event.key);
+  markSpan(currentSpan, result);
 
   currentSpan.classList.remove("active");
 
   currentIndex++;
+  updateCursor();
+
   if (currentMode.endsWith("w")) {
-    const percentage = (currentIndex / spans.length) * 100;
-    progressFill.style.width = percentage + "%";
-  }
-  if (currentIndex === spans.length) {
-    endTest();
+    updateProgressBar(currentIndex, spans.length);
   }
 
-  const nextSpan = spans[currentIndex];
-  if (nextSpan) {
-    nextSpan.classList.add("active");
-  }
+  checkCompletion();
 }
+
+document.addEventListener("keydown", checks);
 
 // TEST COMPLETE
 function endTest() {
   testComplete = true;
   //stop the timer - user types last char
-  clearInterval(timerInterval);
-
-  const elapsedSeconds = (Date.now() - testStartTime) / 1000;
-  const finalElapsedMinutes = elapsedSeconds / 60;
-  const finalWpm =
-    finalElapsedMinutes > 0
-      ? Math.round(correctChar / 5 / finalElapsedMinutes)
-      : 0;
-
-  const results = {
-    wpm: finalWpm,
-    accuracy: accuracy,
-    correctChars: correctChar,
-    wrongChars: wrongChar,
-    totalKeyStroke: totalKeyStroke,
-    backspaceCount: backspaceCount,
-    mode: currentMode,
-    timestamp: new Date().toISOString(),
-  };
-
-  localStorage.setItem("results", JSON.stringify(results));
+  clearTimer();
+  const snapshot = tracker.getSnapshot(currentMode);
+  localStorage.setItem("latestResult", JSON.stringify(snapshot));
   window.location.href = "results.html";
 }
 
@@ -153,24 +183,22 @@ function endTest() {
 let tabPressed = false; //used for restarting the test
 
 function resetTest(newPassage) {
-  console.log("resetTest called, newPassage:", newPassage);
-  clearInterval(timerInterval);
+  clearTimer();
   //reset all vars
   timerStarted = false;
-  testStartTime = null;
   testComplete = false;
-  originalTime = 0;
-  totalTime = 0;
+  resetTimerMode();
   currentIndex = 0;
-  totalKeyStroke = 0;
-  correctChar = 0;
-  wrongChar = 0;
-  accuracy = 0;
-  backspaceCount = 0;
   tabPressed = false;
+  tracker.resetTracker();
 
-  updateModeDisplay(currentMode);
-  localStorage.removeItem("results");
+  // resetTest
+  if (currentMode.endsWith("s")) {
+    updateModeDisplay(timerElement, wordElement, currentMode, "", 100);
+  } else {
+    updateModeDisplay(timerElement, wordElement, "", currentMode, 0);
+  }
+  localStorage.removeItem("latestResult");
 
   if (newPassage) {
     currentPassage = getRandomPassage();
@@ -197,3 +225,28 @@ document.addEventListener("keydown", (event) => {
 document.addEventListener("keyup", (event) => {
   if (event.key === "Tab") tabPressed = false;
 });
+
+const refreshBtn = document.getElementById("refresh-button");
+if (refreshBtn) {
+  refreshBtn.addEventListener("click", () => resetTest(true));
+}
+
+//FONT
+const increaseFontBtn = document.getElementById("increase-font");
+const decreaseFontBtn = document.getElementById("decrease-font");
+const displayFontSize = document.querySelector("span#font-size-display");
+
+increaseFontBtn.addEventListener("click", () => {
+  updateFontSize(1, passageContent);
+  updateButtonStates();
+});
+decreaseFontBtn.addEventListener("click", () => {
+  updateFontSize(-1, passageContent);
+  updateButtonStates();
+});
+
+function updateButtonStates() {
+  displayFontSize.textContent = `${currentSize}px`;
+  increaseFontBtn.disabled = currentSize >= MAX_FONTSIZE;
+  decreaseFontBtn.disabled = currentSize <= MIN_FONTSIZE;
+}

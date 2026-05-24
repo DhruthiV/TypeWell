@@ -1,4 +1,4 @@
-const passages = [
+export const passages = [
   "the quick brown fox jumps over the lazy dog near the riverbank at dawn",
   "success is not final failure is not fatal it is the courage to continue that counts",
   "artificial intelligence is transforming how we write code and build applications",
