@@ -169,6 +169,85 @@ nav {
   justify-content: flex-end;
 }
 
+#drill-banner {
+  padding: 1rem 2rem;
+}
+#weak-keys {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.key-box {
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-bottom: 3px solid var(--border);
+  border-radius: 6px;
+  font-family: "TypingFont";
+  font-size: 14px;
+  user-select: none;
+  position: relative;
+  overflow: hidden;
+  background: var(--error);
+  opacity: calc(var(--rate, 0) * 0.8);
+  color: var(--text2);
+}
+
+.key-box:active {
+  transform: translateY(1px);
+  border-bottom: 1px solid var(--border);
+}
+
+#drill-results-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.drill-modal-box {
+  background: white;
+  border-radius: 12px;
+  padding: 32px;
+  min-width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.drill-modal-title {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.drill-modal-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 16px;
+}
+
+.drill-modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.drill-modal-actions button {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text2);
+  background-color: var(--accent);
+}
+
 footer {
   display: flex;
   align-items: center;

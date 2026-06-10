@@ -19,6 +19,13 @@ import {
   removeItemFromStorage,
   storeHistory,
 } from "./storage.js";
+import { generateDrillPassage } from "./drillbank.js";
+
+const urlParams = new URLSearchParams(window.location.search);
+const isDrillMode = urlParams.get("mode") === "drill";
+const drillWeakKeys = isDrillMode
+  ? JSON.parse(localStorage.getItem("drillWeakKeys") || "[]")
+  : [];
 
 let timerStarted = false; //for time based mode
 let testComplete = false;
@@ -83,8 +90,47 @@ function renderPassage(textToType) {
   spans[0].classList.add("active");
 }
 
-currentPassage = getPassage(currentMode);
+if (isDrillMode) {
+  currentPassage = generateDrillPassage(drillWeakKeys);
+} else {
+  currentPassage = getPassage(currentMode);
+}
+
 renderPassage(currentPassage);
+
+if (isDrillMode) {
+  document.querySelector(".mode-section").style.display = "none";
+  const banner = document.getElementById("drill-banner");
+  const label = document.getElementById("drill-keys-label");
+  banner.style.display = "block";
+  label.textContent =
+    drillWeakKeys.length > 0
+      ? `Drilling weak keys`
+      : "Drill mode - no weak keys found, random practice";
+
+  const weakKeysEl = document.getElementById("weak-keys");
+  weakKeysEl.innerHTML = "";
+
+  drillWeakKeys.forEach((item) => {
+    const span = document.createElement("span");
+    span.className = "key-box";
+
+    span.textContent = item.key.toUpperCase();
+
+    // pass error rate to CSS
+    span.style.setProperty("--rate", item.errorRate);
+
+    weakKeysEl.appendChild(span);
+  });
+}
+function showDrillResults(snapshot) {
+  document.getElementById("drill-results-modal").style.display = "flex";
+  document.getElementById("drill-wpm").textContent = snapshot.wpm;
+  document.getElementById("drill-accuracy").textContent =
+    snapshot.accuracy + "%";
+  document.getElementById("drill-keys-drilled").textContent =
+    drillWeakKeys.length > 0 ? drillWeakKeys.join(", ") : "random practice";
+}
 
 const blockedKeys = [
   "Shift",
@@ -184,7 +230,11 @@ function endTest() {
   const snapshot = tracker.getSnapshot(currentMode);
   storeItemToStorage("latestResult", snapshot);
   storeHistory("testHistory", snapshot);
-  window.location.href = "results.html";
+  if (isDrillMode) {
+    showDrillResults(snapshot);
+  } else {
+    window.location.href = "results.html";
+  }
 }
 
 //Special Key SHORTCUTS
@@ -238,6 +288,16 @@ const refreshBtn = document.getElementById("refresh-button");
 if (refreshBtn) {
   refreshBtn.addEventListener("click", () => resetTest(true));
 }
+
+//DRILL MODE
+document.getElementById("btn-drill-again")?.addEventListener("click", () => {
+  window.location.href = "index.html?mode=drill";
+});
+
+document.getElementById("btn-back-normal")?.addEventListener("click", () => {
+  localStorage.removeItem("drillWeakKeys");
+  window.location.href = "index.html";
+});
 
 //FONT
 const increaseFontBtn = document.getElementById("increase-font");

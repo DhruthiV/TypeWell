@@ -1,6 +1,8 @@
 import { getHistory } from "./storage.js";
 import { drawWpmGraph } from "./graph.js";
 import { renderHeatmap } from "./keyboard.js";
+import { downloadReport } from "./report.js";
+
 const result = JSON.parse(localStorage.getItem("latestResult"));
 
 if (!result) {
@@ -76,15 +78,34 @@ function renderHistory() {
 }
 renderHistory();
 
+// Weak key detection
+function getWeakKeys(keyErrorMap) {
+  return Object.entries(keyErrorMap)
+    .map(([key, data]) => {
+      const errorRate = data.attempts > 0 ? data.errors / data.attempts : 0;
+
+      return {
+        key,
+        attempts: data.attempts,
+        errors: data.errors,
+        errorRate,
+      };
+    })
+    .filter((item) => item.attempts > 0 && item.errorRate > 0.25)
+    .sort((a, b) => b.errorRate - a.errorRate); // descending (worst first)
+}
+
 // --- Actions ---
 document.getElementById("btn-try-again").addEventListener("click", () => {
   window.location.href = "index.html";
 });
 
 document.getElementById("btn-drill").addEventListener("click", () => {
-  // TODO: drill mode
+  const weakKeys = getWeakKeys(result.keyErrorMap);
+  localStorage.setItem("drillWeakKeys", JSON.stringify(weakKeys));
+  window.location.href = "index.html?mode=drill";
 });
 
-document.getElementById("btn-download").addEventListener("click", () => {
-  // TODO: download report
+document.getElementById("btn-download").addEventListener("click", async () => {
+  await downloadReport(result);
 });
