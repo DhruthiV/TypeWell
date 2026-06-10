@@ -1,6 +1,8 @@
 import { getHistory } from "./storage.js";
 import { drawWpmGraph } from "./graph.js";
 import { renderHeatmap } from "./keyboard.js";
+import { downloadReport } from "./report.js";
+
 const result = JSON.parse(localStorage.getItem("latestResult"));
 
 if (!result) {
@@ -96,6 +98,6 @@ document.getElementById("btn-drill").addEventListener("click", () => {
   window.location.href = "index.html?mode=drill";
 });
 
-document.getElementById("btn-download").addEventListener("click", () => {
-  // TODO: download report
+document.getElementById("btn-download").addEventListener("click", async () => {
+  await downloadReport(result);
 });
