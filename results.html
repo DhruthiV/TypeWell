@@ -3,9 +3,108 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <link rel="stylesheet" href="css/reset.css" />
+    <link rel="stylesheet" href="css/results.css" />
+    <title>TypeWell — Results</title>
   </head>
   <body>
-    Hey guys
+    <header>
+      <nav>
+        <div class="logo"><span>TypeWell</span></div>
+        <a href="index.html" class="try-again-btn">
+          <img src="./assets/icons/refreshIcon.svg" alt="Try Again" />
+        </a>
+      </nav>
+    </header>
+
+    <main id="results-main">
+      <!-- Hero WPM -->
+      <section id="hero-section">
+        <div class="wpm-display">
+          <span id="result-wpm" class="result-data"></span>
+          <span class="wpm-label">WPM</span>
+        </div>
+        <div class="mode-badge" id="result-mode"></div>
+      </section>
+
+      <!-- Stat Cards -->
+      <section id="stats-section">
+        <div class="stat-card">
+          <div>
+            <div class="stat-label">Accuracy</div>
+            <div class="stat-info">i</div>
+          </div>
+          <div class="stat-value result-data" id="result-accuracy"></div>
+        </div>
+        <div class="stat-card">
+          <div>
+            <div class="stat-label">Correct Chars</div>
+            <div class="stat-info">i</div>
+          </div>
+          <div class="stat-value result-data" id="result-correct"></div>
+        </div>
+        <div class="stat-card">
+          <div>
+            <div class="stat-label">Wrong Characters</div>
+            <div class="stat-info">i</div>
+          </div>
+          <div class="stat-value result-data" id="result-wrong"></div>
+        </div>
+        <div class="stat-card">
+          <div>
+            <div class="stat-label">Backspaces</div>
+            <div class="stat-info">i</div>
+          </div>
+          <div class="stat-value result-data" id="result-backspaces"></div>
+        </div>
+        <div class="stat-card">
+          <div>
+            <div class="stat-label">Total Keystrokes</div>
+            <div class="stat-info">i</div>
+          </div>
+          <div class="stat-value result-data" id="result-keystrokes"></div>
+        </div>
+        <div class="stat-card">
+          <div>
+            <div class="stat-label">Time</div>
+            <div class="stat-info">i</div>
+          </div>
+          <div class="stat-value result-data" id="result-time"></div>
+        </div>
+      </section>
+
+      <div class="visual-row">
+        <!-- WPM Graph -->
+        <section id="graph-section">
+          <div class="section-title">WPM over time</div>
+          <canvas id="wpm-graph"></canvas>
+        </section>
+
+        <!-- Keyboard Heatmap -->
+        <section id="heatmap-section">
+          <div class="section-title">Key error heatmap</div>
+          <div id="keyboard-heatmap"></div>
+        </section>
+      </div>
+
+      <!-- History -->
+      <section id="history-section">
+        <div class="section-title">Last 5 results</div>
+        <div id="history-list"></div>
+      </section>
+
+      <!-- Actions -->
+      <section id="actions-section">
+        <button id="btn-try-again">
+          Try Again
+          <img src="./assets/icons/refreshIcon.svg" alt="" srcset="" />
+        </button>
+        <button id="btn-drill">Drill Weak Keys</button>
+        <button id="btn-download">Download Report</button>
+      </section>
+    </main>
+
+    <footer>Temporary words here will change this part</footer>
+    <script type="module" src="./js/results.js"></script>
   </body>
 </html>

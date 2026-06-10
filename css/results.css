@@ -1,0 +1,150 @@
+@import "./main.css";
+
+body {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.result-data {
+  font-family: "TypingFont";
+}
+
+#results-main {
+  margin: 0rem 1rem;
+  padding: 1rem 2rem;
+}
+#hero-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.wpm-display {
+  display: flex;
+}
+
+#result-wpm {
+  font-size: 4rem;
+}
+
+#result-mode {
+  color: var(--muted);
+}
+
+#stats-section {
+  margin: 2rem auto;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.stat-card {
+  margin: 0.5rem auto;
+  padding: 1rem;
+  max-width: 250px;
+
+  width: 200px;
+  border: 1px solid var(--muted);
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.stat-card div {
+  display: inherit;
+  align-content: start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.stat-info {
+  align-self: flex-end;
+  overflow-wrap: break-word;
+}
+
+.stat-label {
+  font-size: 18px;
+}
+
+.stat-value {
+  font-size: 18px;
+  /* font-weight: 600; */
+  color: var(--text);
+}
+
+.section-title {
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+.visual-row {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.visual-row section {
+  flex: 1;
+}
+
+@media (max-width: 768px) {
+  .visual-row {
+    flex-direction: column;
+  }
+}
+#keyboard-heatmap {
+  margin: 2rem auto;
+  padding: 1rem;
+  width: 500px;
+}
+.keyboard-row {
+  margin: 0.25rem;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  gap: 0.25rem;
+}
+
+.keyboard-row div,
+.space-row {
+  width: 50px;
+  height: 50px;
+  font-family: "TypingFont";
+  font-size: 24px;
+  padding: 0.5rem;
+  text-align: center;
+  border-radius: 0.5rem;
+}
+
+.space-row {
+  margin: auto;
+  width: 50%;
+}
+
+#history-list {
+  border: 1px solid var(--muted);
+  border-radius: 1rem;
+  padding: 1rem;
+}
+
+.history-row {
+  margin: 0.5rem;
+  padding: 0.5rem;
+  display: inline-flex;
+  gap: 0.25rem;
+}
+
+footer {
+  position: relative;
+}
