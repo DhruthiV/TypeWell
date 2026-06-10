@@ -52,6 +52,6 @@ export function renderHeatmap(keyErrorMap) {
   const spaceDiv = document.createElement("div");
   spaceDiv.classList.add("space-row");
   spaceDiv.textContent = "Space";
-  spaceDiv.style.backgroundColor = getKeyColor(" ", keyErrorMap[" "]);
+  spaceDiv.style.backgroundColor = getKeyColor(" ", keyErrorMap);
   container.append(spaceDiv);
 }

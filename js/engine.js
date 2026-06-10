@@ -161,6 +161,10 @@ function checks(event) {
   currentSpan.classList.remove("active");
 
   currentIndex++;
+  // sample WPM every 10 characters for word modes
+  if (currentMode.endsWith("w") && currentIndex % 10 === 0) {
+    tracker.sampleWpm();
+  }
   updateCursor();
 
   if (currentMode.endsWith("w")) {
