@@ -81,10 +81,18 @@ renderHistory();
 // Weak key detection
 function getWeakKeys(keyErrorMap) {
   return Object.entries(keyErrorMap)
-    .filter(
-      ([key, data]) => data.attempts > 0 && data.errors / data.attempts > 0.25,
-    )
-    .map(([key]) => key);
+    .map(([key, data]) => {
+      const errorRate = data.attempts > 0 ? data.errors / data.attempts : 0;
+
+      return {
+        key,
+        attempts: data.attempts,
+        errors: data.errors,
+        errorRate,
+      };
+    })
+    .filter((item) => item.attempts > 0 && item.errorRate > 0.25)
+    .sort((a, b) => b.errorRate - a.errorRate); // descending (worst first)
 }
 
 // --- Actions ---

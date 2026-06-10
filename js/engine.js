@@ -105,8 +105,23 @@ if (isDrillMode) {
   banner.style.display = "block";
   label.textContent =
     drillWeakKeys.length > 0
-      ? `Drilling weak keys: ${drillWeakKeys.join(", ")}`
+      ? `Drilling weak keys`
       : "Drill mode - no weak keys found, random practice";
+
+  const weakKeysEl = document.getElementById("weak-keys");
+  weakKeysEl.innerHTML = "";
+
+  drillWeakKeys.forEach((item) => {
+    const span = document.createElement("span");
+    span.className = "key-box";
+
+    span.textContent = item.key.toUpperCase();
+
+    // pass error rate to CSS
+    span.style.setProperty("--rate", item.errorRate);
+
+    weakKeysEl.appendChild(span);
+  });
 }
 function showDrillResults(snapshot) {
   document.getElementById("drill-results-modal").style.display = "flex";

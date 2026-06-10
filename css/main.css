@@ -169,6 +169,36 @@ nav {
   justify-content: flex-end;
 }
 
+#drill-banner {
+  padding: 1rem 2rem;
+}
+#weak-keys {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.key-box {
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-bottom: 3px solid var(--border);
+  border-radius: 6px;
+  font-family: "TypingFont";
+  font-size: 14px;
+  user-select: none;
+  position: relative;
+  overflow: hidden;
+  background: var(--error);
+  opacity: calc(var(--rate, 0) * 0.8);
+  color: var(--text2);
+}
+
+.key-box:active {
+  transform: translateY(1px);
+  border-bottom: 1px solid var(--border);
+}
+
 #drill-results-modal {
   position: fixed;
   inset: 0;
@@ -199,11 +229,6 @@ nav {
   flex-direction: column;
   gap: 8px;
   font-size: 16px;
-}
-
-.drill-modal-keys {
-  font-size: 13px;
-  color: #666;
 }
 
 .drill-modal-actions {

@@ -370,28 +370,25 @@ const drillWords = [
 ];
 
 export function generateDrillPassage(weakKeys) {
-  // if no weak keys just return a random set of words
   if (!weakKeys || weakKeys.length === 0) {
     const shuffled = [...drillWords].sort(() => Math.random() - 0.5);
-    return shuffled.slice(0, 40).join(" ");
+    return shuffled.slice(0, 25).join(" ");
   }
 
-  // split words into heavy - contain weak key and normal
-  const heavyWords = drillWords.filter((word) =>
-    weakKeys.some((key) => word.includes(key)),
-  );
-  const normalWords = drillWords.filter(
-    (word) => !weakKeys.some((key) => word.includes(key)),
-  );
+  const scored = drillWords.map((word) => {
+    let score = 0;
 
-  // 70% heavy words, 30% normal forces weak key practice
-  const heavyCount = 28;
-  const normalCount = 12;
+    for (const key of weakKeys) {
+      if (word.includes(key)) score++;
+    }
 
-  const picked = [
-    ...heavyWords.sort(() => Math.random() - 0.5).slice(0, heavyCount),
-    ...normalWords.sort(() => Math.random() - 0.5).slice(0, normalCount),
-  ].sort(() => Math.random() - 0.5); // shuffle so heavy words are not all bunched
+    return { word, score };
+  });
 
-  return picked.join(" ");
+  const sorted = scored
+    .sort((a, b) => b.score - a.score) // most weak-key-heavy first
+    .slice(0, 25) // always guarantee 25 words
+    .map((x) => x.word);
+
+  return sorted.join(" ");
 }
