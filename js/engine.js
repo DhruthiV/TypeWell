@@ -1,7 +1,7 @@
 //Timer
 import * as tracker from "./tracker.js";
 import { startTimer, resetTimerMode, clearTimer } from "./timer.js";
-import { passages } from "./passages.js";
+import { getPassage } from "./passages.js";
 import {
   currentMode,
   setCurrentMode,
@@ -53,16 +53,14 @@ modeButtons.forEach((button) =>
       } else {
         updateModeDisplay(timerElement, wordElement, "", newMode, 0);
       }
+      currentPassage = getPassage(currentMode);
+      renderPassage(currentPassage);
     }
     clickedButton.blur(); // remove button focus
   }),
 );
 
 // PASSAGE CONTENT
-function getRandomPassage() {
-  const index = Math.floor(Math.random() * passages.length);
-  return passages[index];
-}
 let currentPassage = "";
 let characters = [];
 let spans = [];
@@ -85,7 +83,7 @@ function renderPassage(textToType) {
   spans[0].classList.add("active");
 }
 
-currentPassage = getRandomPassage();
+currentPassage = getPassage(currentMode);
 renderPassage(currentPassage);
 
 const blockedKeys = [
@@ -207,7 +205,7 @@ function resetTest(newPassage) {
   removeItemFromStorage("latestResult");
 
   if (newPassage) {
-    currentPassage = getRandomPassage();
+    currentPassage = getPassage(currentMode);
   }
   renderPassage(currentPassage);
 }
@@ -245,10 +243,12 @@ const displayFontSize = document.querySelector("span#font-size-display");
 increaseFontBtn.addEventListener("click", () => {
   updateFontSize(1, passageContent);
   updateButtonStates();
+  increaseFontBtn.blur();
 });
 decreaseFontBtn.addEventListener("click", () => {
   updateFontSize(-1, passageContent);
   updateButtonStates();
+  decreaseFontBtn.blur();
 });
 
 function updateButtonStates() {
