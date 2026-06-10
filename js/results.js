@@ -76,13 +76,24 @@ function renderHistory() {
 }
 renderHistory();
 
+// Weak key detection
+function getWeakKeys(keyErrorMap) {
+  return Object.entries(keyErrorMap)
+    .filter(
+      ([key, data]) => data.attempts > 0 && data.errors / data.attempts > 0.25,
+    )
+    .map(([key]) => key);
+}
+
 // --- Actions ---
 document.getElementById("btn-try-again").addEventListener("click", () => {
   window.location.href = "index.html";
 });
 
 document.getElementById("btn-drill").addEventListener("click", () => {
-  // TODO: drill mode
+  const weakKeys = getWeakKeys(result.keyErrorMap);
+  localStorage.setItem("drillWeakKeys", JSON.stringify(weakKeys));
+  window.location.href = "index.html?mode=drill";
 });
 
 document.getElementById("btn-download").addEventListener("click", () => {

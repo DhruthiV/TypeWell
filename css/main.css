@@ -169,6 +169,60 @@ nav {
   justify-content: flex-end;
 }
 
+#drill-results-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.drill-modal-box {
+  background: white;
+  border-radius: 12px;
+  padding: 32px;
+  min-width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.drill-modal-title {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.drill-modal-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 16px;
+}
+
+.drill-modal-keys {
+  font-size: 13px;
+  color: #666;
+}
+
+.drill-modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.drill-modal-actions button {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text2);
+  background-color: var(--accent);
+}
+
 footer {
   display: flex;
   align-items: center;
