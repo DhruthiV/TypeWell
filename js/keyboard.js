@@ -31,7 +31,7 @@ function getKeyColor(key, keyErrorMap) {
 
 export function renderHeatmap(keyErrorMap) {
   const container = document.getElementById("keyboard-heatmap");
-
+  container.innerHTML = "";
   KEYBOARD_ROWS.forEach((row) => {
     const rowDiv = document.createElement("div");
     rowDiv.classList.add("keyboard-row");

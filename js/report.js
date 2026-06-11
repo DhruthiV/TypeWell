@@ -1,15 +1,8 @@
+import { getModeLabel } from "./utils.js";
 export async function downloadReport(result) {
   const { jsPDF } = window.jspdf;
 
-  const modeLabel = (mode) => {
-    if (mode === "60s") return "60 Seconds";
-    if (mode === "120s") return "120 Seconds";
-    if (mode === "25w") return "25 Words";
-    if (mode === "50w") return "50 Words";
-    if (mode === "100w") return "100 Words";
-    return mode;
-  };
-
+  const modeLabel = getModeLabel(result.mode);
   const weakKeyMap = {};
   Object.entries(result.keyErrorMap).forEach(([key, data]) => {
     if (data.attempts > 0 && data.errors / data.attempts > 0.25) {
@@ -90,7 +83,7 @@ export async function downloadReport(result) {
   }
 
   const totalTyped = result.correctChars + result.wrongChars;
-  const summary = `The user typed ${result.correctChars} correct characters out of ${totalTyped} total in ${result.duration} seconds, making ${result.wrongChars} errors and ${result.backspaceCount} backspace corrections. Final accuracy was ${result.accuracy}% at ${result.wpm} WPM in ${modeLabel(result.mode)} mode.`;
+  const summary = `The user typed ${result.correctChars} correct characters out of ${totalTyped} total in ${result.duration} seconds, making ${result.wrongChars} errors and ${result.backspaceCount} backspace corrections. Final accuracy was ${result.accuracy}% at ${result.wpm} WPM in ${modeLabel} mode.`;
 
   const sharedCss = `
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -228,7 +221,7 @@ export async function downloadReport(result) {
           minute: "2-digit",
         })}</div>
       </div>
-      <div class="mode-pill">${modeLabel(result.mode)}</div>
+      <div class="mode-pill">${modeLabel}</div>
     </div>
     <div class="hero">
       <div class="hero-block">
@@ -328,7 +321,7 @@ export async function downloadReport(result) {
         <h1>TypeWell Report</h1>
         <div class="meta">WPM Over Time &amp; Key Error Map</div>
       </div>
-      <div class="mode-pill">${modeLabel(result.mode)}</div>
+      <div class="mode-pill">${modeLabel}</div>
     </div>
     <div class="graph-section">
       <div class="section-title" style="padding: 0 0 12px;">WPM Over Time</div>
