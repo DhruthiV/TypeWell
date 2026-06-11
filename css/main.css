@@ -262,6 +262,10 @@ nav {
   background-color: var(--accent);
 }
 
+#btn-back-normal {
+  background-color: var(--muted2);
+}
+
 footer {
   display: flex;
   align-items: center;
@@ -288,6 +292,7 @@ footer {
 @media (max-width: 480px) {
   body {
     width: 100dvw;
+    overflow-x: hidden;
   }
   nav {
     padding: 0.75rem 1rem;
