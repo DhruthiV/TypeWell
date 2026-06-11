@@ -1,52 +1,126 @@
 export function drawWpmGraph(wpmHistory) {
   if (!wpmHistory || wpmHistory.length < 2) return;
 
-  const canvas = document.getElementById("wpm-graph");
-  const context = canvas.getContext("2d");
-  canvas.width = canvas.parentElement.offsetWidth;
-  canvas.height = 200;
+  requestAnimationFrame(() => {
+    const canvas = document.getElementById("wpm-graph");
+    const ctx = canvas.getContext("2d");
 
-  const padding = 40;
-  const maxWpm = Math.max(...wpmHistory.map((p) => p.wpm));
-  const maxSecond = wpmHistory[wpmHistory.length - 1].second;
+    const cssWidth = canvas.parentElement.offsetWidth;
+    const cssHeight = 220;
 
-  //convert values to pixel positions
-  const toX = (second) =>
-    padding + (second / maxSecond) * (canvas.width - padding * 2);
-  const toY = (wpm) =>
-    canvas.height - padding - (wpm / maxWpm) * (canvas.height - padding * 2);
+    const dpr = window.devicePixelRatio || 1;
 
-  context.beginPath();
-  context.moveTo(toX(0), toY(0));
+    canvas.width = cssWidth * dpr;
+    canvas.height = cssHeight * dpr;
 
-  wpmHistory.forEach((point) => {
-    context.lineTo(toX(point.second), toY(point.wpm));
-  });
+    canvas.style.width = `${cssWidth}px`;
+    canvas.style.height = `${cssHeight}px`;
 
-  context.strokeStyle = "blue";
-  context.lineWidth = 2;
-  context.stroke();
+    ctx.scale(dpr, dpr);
 
-  // Y axis label
-  context.save();
-  context.translate(12, canvas.height / 2);
-  context.rotate(-Math.PI / 2);
-  context.textAlign = "center";
+    const width = cssWidth;
+    const height = cssHeight;
 
-  context.font = "12px MainFont";
-  context.fillText("WPM", 0, 0);
-  context.restore();
+    const padding = {
+      top: 20,
+      right: 20,
+      bottom: 40,
+      left: 45,
+    };
 
-  // X axis label
-  context.textAlign = "center";
+    const accent = "#2563eb";
+    const grid = "#e5e7eb";
+    const text = "#6b7280";
 
-  context.font = "12px MainFont";
-  context.fillText("Time (s)", canvas.width / 2, canvas.height - 4);
+    const maxWpm = Math.max(...wpmHistory.map((p) => p.wpm), 1);
+    const maxSecond = wpmHistory[wpmHistory.length - 1].second;
 
-  wpmHistory.forEach((point) => {
-    context.beginPath();
-    context.arc(toX(point.second), toY(point.wpm), 3, 0, Math.PI * 2);
-    context.fillStyle = "blue";
-    context.fill();
+    const toX = (second) =>
+      padding.left +
+      (second / maxSecond) * (width - padding.left - padding.right);
+
+    const toY = (wpm) =>
+      padding.top +
+      (1 - wpm / maxWpm) * (height - padding.top - padding.bottom);
+
+    ctx.clearRect(0, 0, width, height);
+
+    // Horizontal grid lines
+    const gridLines = 4;
+
+    for (let i = 0; i <= gridLines; i++) {
+      const value = (maxWpm / gridLines) * i;
+      const y = toY(value);
+
+      ctx.beginPath();
+      ctx.moveTo(padding.left, y);
+      ctx.lineTo(width - padding.right, y);
+      ctx.strokeStyle = grid;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      ctx.fillStyle = text;
+      ctx.font = "12px sans-serif";
+      ctx.textAlign = "right";
+      ctx.fillText(Math.round(value), padding.left - 8, y + 4);
+    }
+
+    // Line
+    ctx.beginPath();
+
+    wpmHistory.forEach((point, index) => {
+      const x = toX(point.second);
+      const y = toY(point.wpm);
+
+      if (index === 0) {
+        ctx.moveTo(x, y);
+      } else {
+        ctx.lineTo(x, y);
+      }
+    });
+
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 3;
+    ctx.lineJoin = "round";
+    ctx.lineCap = "round";
+    ctx.stroke();
+
+    // Dots
+    wpmHistory.forEach((point) => {
+      const x = toX(point.second);
+      const y = toY(point.wpm);
+
+      ctx.beginPath();
+      ctx.arc(x, y, 4, 0, Math.PI * 2);
+      ctx.fillStyle = accent;
+      ctx.fill();
+    });
+
+    // X labels
+    const labels = [
+      wpmHistory[0],
+      wpmHistory[Math.floor(wpmHistory.length / 2)],
+      wpmHistory[wpmHistory.length - 1],
+    ];
+
+    ctx.fillStyle = text;
+    ctx.font = "12px sans-serif";
+    ctx.textAlign = "center";
+
+    labels.forEach((point) => {
+      ctx.fillText(`${point.second}s`, toX(point.second), height - 12);
+    });
+
+    // Y axis label
+    ctx.save();
+    ctx.translate(15, height / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.textAlign = "center";
+    ctx.fillText("WPM", 0, 0);
+    ctx.restore();
+
+    // X axis label
+    ctx.textAlign = "center";
+    ctx.fillText("Time (s)", width / 2, height - 2);
   });
 }

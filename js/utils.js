@@ -29,7 +29,7 @@ export function updateProgressBar(current, total) {
 
 export const MAX_FONTSIZE = 36;
 export const MIN_FONTSIZE = 12;
-export let currentSize = 16;
+export let currentSize = 32;
 
 export function updateFontSize(delta, content) {
   let newSize = currentSize + delta;
@@ -37,4 +37,13 @@ export function updateFontSize(delta, content) {
 
   currentSize = newSize;
   content.style.fontSize = `${currentSize}px`;
+}
+
+export function getModeLabel(mode) {
+  if (mode === "60s") return "60 Seconds";
+  if (mode === "120s") return "120 Seconds";
+  if (mode === "25w") return "25 Words";
+  if (mode === "50w") return "50 Words";
+  if (mode === "100w") return "100 Words";
+  return mode;
 }
