@@ -2,6 +2,7 @@ import { getHistory } from "./storage.js";
 import { drawWpmGraph } from "./graph.js";
 import { renderHeatmap } from "./keyboard.js";
 import { downloadReport } from "./report.js";
+import { getModeLabel } from "./utils.js";
 
 const result = JSON.parse(localStorage.getItem("latestResult"));
 
@@ -11,7 +12,7 @@ if (!result) {
 
 //RESULT DATA
 document.getElementById("result-wpm").textContent = result.wpm;
-document.getElementById("result-mode").textContent = result.mode;
+document.getElementById("result-mode").textContent = getModeLabel(result.mode);
 document.getElementById("result-accuracy").textContent = result.accuracy + "%";
 document.getElementById("result-correct").textContent = result.correctChars;
 document.getElementById("result-wrong").textContent = result.wrongChars;
@@ -52,29 +53,45 @@ function renderHistory() {
   const container = document.getElementById("history-list");
 
   if (!history || history.length < 2) {
-    container.textContent = "Complete another test to see history.";
+    container.innerHTML =
+      '<p class="history-empty">Complete another test to see history.</p>';
     return;
   }
 
-  history.toReversed().forEach((element) => {
-    const row = document.createElement("div");
-    row.classList.add("history-row");
-    const wpm = document.createElement("span");
-    wpm.textContent = `${element.wpm} WPM`;
+  const table = document.createElement("table");
+  table.classList.add("history-table");
 
-    const mode = document.createElement("span");
-    mode.textContent = element.mode;
+  table.innerHTML = `
+    <thead>
+      <tr>
+        <th>WPM</th>
+        <th>Mode</th>
+        <th>Accuracy</th>
+        <th>Backspaces</th>
+        <th>When</th>
+      </tr>
+    </thead>
+  `;
 
-    const accuracy = document.createElement("span");
-    accuracy.textContent = `${element.accuracy}% Accuracy`;
+  const tbody = document.createElement("tbody");
 
-    const time = document.createElement("span");
-    time.textContent = timeAgo(element.timestamp);
+  history.toReversed().forEach((entry, index) => {
+    const tr = document.createElement("tr");
+    if (index === 0) tr.classList.add("history-latest");
 
-    row.append(wpm, mode, accuracy, time);
+    tr.innerHTML = `
+      <td>${entry.wpm}</td>
+      <td>${entry.mode}</td>
+      <td>${entry.accuracy}%</td>
+      <td>${entry.backspaceCount}</td>
+      <td>${timeAgo(entry.timestamp)}</td>
+    `;
 
-    container.append(row);
+    tbody.append(tr);
   });
+
+  table.append(tbody);
+  container.append(table);
 }
 renderHistory();
 

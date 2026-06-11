@@ -12,7 +12,9 @@
   <body>
     <header>
       <nav>
-        <div class="logo"><span>TypeWell</span></div>
+        <div class="logo">
+          <img src="./assets/logo.png" alt="TypeWell" height="81" />
+        </div>
         <a href="index.html" class="try-again-btn">
           <img src="./assets/icons/refreshIcon.svg" alt="Try Again" />
         </a>
@@ -22,57 +24,99 @@
     <main id="results-main">
       <!-- Hero WPM -->
       <section id="hero-section">
-        <div class="wpm-display">
+        <div class="wpm-display-block">
           <span id="result-wpm" class="result-data"></span>
-          <span class="wpm-label">WPM</span>
+          <span class="wpm-label">Words per minute</span>
+          <div class="mode-badge" id="result-mode"></div>
         </div>
-        <div class="mode-badge" id="result-mode"></div>
-      </section>
 
-      <!-- Stat Cards -->
-      <section id="stats-section">
-        <div class="stat-card">
-          <div>
-            <div class="stat-label">Accuracy</div>
-            <div class="stat-info">i</div>
+        <!-- Stat Cards -->
+        <section id="stats-section">
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-label">Accuracy</div>
+              <div class="stat-info">
+                <img
+                  src="./assets/icons/infoIcon.svg"
+                  alt="The number of correct characters user typed."
+                  width="20"
+                  height="20"
+                />
+              </div>
+            </div>
+            <div class="stat-value result-data" id="result-accuracy"></div>
           </div>
-          <div class="stat-value result-data" id="result-accuracy"></div>
-        </div>
-        <div class="stat-card">
-          <div>
-            <div class="stat-label">Correct Chars</div>
-            <div class="stat-info">i</div>
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-label">Correct Chars</div>
+              <div class="stat-info">
+                <img
+                  src="./assets/icons/infoIcon.svg"
+                  alt="The number of correct characters user typed."
+                  width="20"
+                  height="20"
+                />
+              </div>
+            </div>
+            <div class="stat-value result-data" id="result-correct"></div>
           </div>
-          <div class="stat-value result-data" id="result-correct"></div>
-        </div>
-        <div class="stat-card">
-          <div>
-            <div class="stat-label">Wrong Characters</div>
-            <div class="stat-info">i</div>
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-label">Wrong Characters</div>
+              <div class="stat-info">
+                <img
+                  src="./assets/icons/infoIcon.svg"
+                  alt="The number of correct characters user typed."
+                  width="20"
+                  height="20"
+                />
+              </div>
+            </div>
+            <div class="stat-value result-data" id="result-wrong"></div>
           </div>
-          <div class="stat-value result-data" id="result-wrong"></div>
-        </div>
-        <div class="stat-card">
-          <div>
-            <div class="stat-label">Backspaces</div>
-            <div class="stat-info">i</div>
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-label">Backspaces</div>
+              <div class="stat-info">
+                <img
+                  src="./assets/icons/infoIcon.svg"
+                  alt="The number of correct characters user typed."
+                  width="20"
+                  height="20"
+                />
+              </div>
+            </div>
+            <div class="stat-value result-data" id="result-backspaces"></div>
           </div>
-          <div class="stat-value result-data" id="result-backspaces"></div>
-        </div>
-        <div class="stat-card">
-          <div>
-            <div class="stat-label">Total Keystrokes</div>
-            <div class="stat-info">i</div>
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-label">Total Keystrokes</div>
+              <div class="stat-info">
+                <img
+                  src="./assets/icons/infoIcon.svg"
+                  alt="The number of correct characters user typed."
+                  width="20"
+                  height="20"
+                />
+              </div>
+            </div>
+            <div class="stat-value result-data" id="result-keystrokes"></div>
           </div>
-          <div class="stat-value result-data" id="result-keystrokes"></div>
-        </div>
-        <div class="stat-card">
-          <div>
-            <div class="stat-label">Time</div>
-            <div class="stat-info">i</div>
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-label">Time</div>
+              <div class="stat-info">
+                <img
+                  src="./assets/icons/infoIcon.svg"
+                  alt="The number of correct characters user typed."
+                  width="20"
+                  height="20"
+                />
+              </div>
+            </div>
+            <div class="stat-value result-data" id="result-time"></div>
           </div>
-          <div class="stat-value result-data" id="result-time"></div>
-        </div>
+        </section>
       </section>
 
       <div class="visual-row">
