@@ -74,6 +74,12 @@ let spans = [];
 let currentIndex = 0;
 
 const passageContent = document.getElementById("passage-content");
+const mobileInput = document.getElementById("mobile-input");
+
+// tap on passage - focus hidden input - opens mobile keyboard
+passageContent.addEventListener("click", () => {
+  mobileInput.focus();
+});
 
 function renderPassage(textToType) {
   console.trace("renderPassage called");
@@ -220,7 +226,32 @@ function checks(event) {
   checkCompletion();
 }
 
-document.addEventListener("keydown", checks);
+document.addEventListener("keydown", (e) => {
+  // if mobile input is focused, let the input event handle it
+  if (document.activeElement === mobileInput) return;
+  console.log(e);
+  checks(e);
+});
+
+// mobile — listen to input event on the hidden input
+mobileInput.addEventListener("input", (e) => {
+  // only process if this was triggered by mobile input
+  // on desktop, keydown already handled it
+  if (e.inputType === "insertText" && !e.isTrusted) return;
+
+  const typed = e.data;
+  if (!typed) return;
+
+  mobileInput.value = "";
+  checks({ key: typed, preventDefault: () => {} });
+});
+
+// mobile backspace fires as input with inputType deleteContentBackward
+mobileInput.addEventListener("beforeinput", (e) => {
+  if (e.inputType === "deleteContentBackward") {
+    checks({ key: "Backspace", preventDefault: () => {} });
+  }
+});
 
 // TEST COMPLETE
 function endTest() {
@@ -286,7 +317,10 @@ document.addEventListener("keyup", (event) => {
 
 const refreshBtn = document.getElementById("refresh-button");
 if (refreshBtn) {
-  refreshBtn.addEventListener("click", () => resetTest(true));
+  refreshBtn.addEventListener("click", () => {
+    resetTest(true);
+    refreshBtn.blur();
+  });
 }
 
 //DRILL MODE

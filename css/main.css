@@ -135,6 +135,17 @@ nav {
     hue-rotate(157deg) brightness(122%) contrast(77%);
 }
 
+#mobile-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  border: none;
+  outline: none;
+  pointer-events: none;
+  caret-color: transparent;
+}
+
 #passage-content {
   color: var(--muted);
 }
