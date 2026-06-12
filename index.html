@@ -49,18 +49,20 @@
           </div>
         </div>
 
-        <!-- Hidden input for mobile keyboard trigger -->
-        <input
-          id="mobile-input"
-          type="text"
-          autocomplete="off"
-          autocorrect="off"
-          autocapitalize="off"
-          spellcheck="false"
-          aria-hidden="true"
-        />
-        <!-- ACTUAL CONTENT TO TYPE -->
-        <div id="passage-content"></div>
+        <div id="passage">
+          <!-- Hidden input for mobile keyboard trigger -->
+          <input
+            id="mobile-input"
+            type="text"
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
+            class="invisible-trigger"
+          />
+          <!-- ACTUAL CONTENT TO TYPE -->
+          <div id="passage-content"></div>
+        </div>
 
         <div class="countdown">
           <!-- Countdown default is 25 words -->

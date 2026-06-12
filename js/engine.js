@@ -82,7 +82,6 @@ passageContent.addEventListener("click", () => {
 });
 
 function renderPassage(textToType) {
-  console.trace("renderPassage called");
   passageContent.innerHTML = "";
   characters = textToType.split("");
 
@@ -219,6 +218,11 @@ function checks(event) {
   }
   updateCursor();
 
+  const activeSpan = spans[currentIndex];
+  if (activeSpan) {
+    activeSpan.scrollIntoView({ block: "center", behavior: "smooth" });
+  }
+
   if (currentMode.endsWith("w")) {
     updateProgressBar(currentIndex, spans.length);
   }
@@ -229,7 +233,6 @@ function checks(event) {
 document.addEventListener("keydown", (e) => {
   // if mobile input is focused, let the input event handle it
   if (document.activeElement === mobileInput) return;
-  console.log(e);
   checks(e);
 });
 
@@ -264,7 +267,7 @@ function endTest() {
   if (isDrillMode) {
     showDrillResults(snapshot);
   } else {
-    window.location.href = "results.html";
+    window.location.replace("results.html");
   }
 }
 

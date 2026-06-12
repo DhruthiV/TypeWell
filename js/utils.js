@@ -16,7 +16,6 @@ export function updateModeDisplay(
   wordText,
   barWidth,
 ) {
-  console.log(timerEl, wordEl, timerText, wordText, barWidth);
   timerEl.textContent = timerText;
   wordEl.textContent = wordText;
   progressFill.style.width = barWidth + "%";
