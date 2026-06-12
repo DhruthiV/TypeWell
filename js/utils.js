@@ -1,4 +1,6 @@
 export let currentMode = "25w";
+export let activeToast = null;
+export let toastTimeoutId = null;
 
 export const progressFill = document.querySelector(".progress-fill");
 export const timerElement = document.getElementById("countdown-timer");
@@ -45,4 +47,31 @@ export function getModeLabel(mode) {
   if (mode === "50w") return "50 Words";
   if (mode === "100w") return "100 Words";
   return mode;
+}
+
+export function showToast(message, type = "info") {
+  const container = document.querySelector("#toast-container");
+  if (!container) return;
+
+  //Clear the previous toast and its timer instantly if it exists
+  if (activeToast) {
+    activeToast.remove();
+    clearTimeout(toastTimeoutId);
+  }
+
+  const toast = document.createElement("div");
+  toast.className = `toast ${type}`;
+  toast.innerText = message;
+
+  container.appendChild(toast);
+
+  activeToast = toast;
+
+  toastTimeoutId = setTimeout(() => {
+    toast.remove();
+    // Only clear if this specific toast is still the active one
+    if (activeToast === toast) {
+      activeToast = null;
+    }
+  }, 3000);
 }

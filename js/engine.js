@@ -13,6 +13,7 @@ import {
   updateFontSize,
   MAX_FONTSIZE,
   MIN_FONTSIZE,
+  showToast,
 } from "./utils.js";
 import {
   storeItemToStorage,
@@ -72,6 +73,7 @@ let currentPassage = "";
 let characters = [];
 let spans = [];
 let currentIndex = 0;
+let lastCapsLockState;
 
 const passageContent = document.getElementById("passage-content");
 const mobileInput = document.getElementById("mobile-input");
@@ -137,21 +139,6 @@ function showDrillResults(snapshot) {
     drillWeakKeys.length > 0 ? drillWeakKeys.join(", ") : "random practice";
 }
 
-const blockedKeys = [
-  "Shift",
-  "Control",
-  "Alt",
-  "Meta",
-  "CapsLock",
-  "Tab",
-  "Escape",
-  "ArrowUp",
-  "ArrowDown",
-  "ArrowLeft",
-  "ArrowRight",
-  "Delete",
-];
-
 const handleBackspace = (currentSpan) => {
   tracker.recordBackspace();
   currentSpan.classList.remove("active");
@@ -186,7 +173,32 @@ function checks(event) {
 
   if (!currentSpan) return;
 
-  if (blockedKeys.includes(event.key)) return;
+  //Check if capslock is on
+  const currentCapsLockState = event.getModifierState("CapsLock");
+  if (currentCapsLockState !== lastCapsLockState) {
+    if (currentCapsLockState === true) {
+      showToast("Caps Lock is turned ON", "warn");
+    } else if (currentCapsLockState === false && lastCapsLockState === true) {
+      showToast("Caps Lock is turned OFF", "info");
+    }
+
+    lastCapsLockState = currentCapsLockState;
+  }
+
+  //Block the system shortcut keys
+  if (event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) {
+    event.preventDefault();
+    return;
+  }
+
+  const isLetter = /^[a-zA-Z]$/.test(event.key);
+  const isSpaceKey = event.key === " ";
+  //Block all the other keys except lowercase alphabets, space key and backspace
+
+  if (!isLetter && !isSpaceKey && event.key !== "Backspace") {
+    event.preventDefault();
+    return;
+  }
 
   //Start the timer when user starts typing first keypress
   if (!timerStarted) {
@@ -200,8 +212,12 @@ function checks(event) {
   }
 
   // Backspace
-  if (event.key == "Backspace" && currentIndex > 0) {
-    handleBackspace(currentSpan);
+  if (event.key === "Backspace") {
+    if (currentIndex > 0) {
+      handleBackspace(currentSpan);
+    }
+    // Prevent default browser backspace behaviors
+    event.preventDefault();
     return;
   }
 
@@ -327,6 +343,13 @@ if (refreshBtn) {
   refreshBtn.addEventListener("click", () => {
     resetTest(true);
     refreshBtn.blur();
+
+    const passage = document.getElementById("passage");
+    passage.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "smooth",
+    });
   });
 }
 

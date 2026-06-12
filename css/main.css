@@ -124,6 +124,42 @@ nav {
   justify-content: space-between;
 }
 
+#toast-container {
+  z-index: 20;
+  width: 250px;
+}
+
+.toast {
+  background: var(--accent);
+  color: var(--text2);
+  padding: 6px;
+  border-radius: 5px;
+  font-family: "TypingFont";
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation: fallDown 0.3s ease forwards;
+}
+
+.toast.warn {
+  background: var(--error);
+  color: var(--text2);
+}
+.toast.info {
+  background: var(--accent);
+  color: var(--text2);
+}
+
+@keyframes fallDown {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 #increase-font {
   font-size: 28px;
   color: var(--accent);
@@ -360,7 +396,10 @@ footer {
   .passage-card {
     padding: 1rem;
   }
-
+  #toast-container {
+    width: 200px;
+    font-size: small;
+  }
   #passage {
     max-height: 130px;
   }
