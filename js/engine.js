@@ -236,6 +236,8 @@ document.addEventListener("keydown", (e) => {
   checks(e);
 });
 
+document.addEventListener("paste", (e) => e.preventDefault());
+
 // mobile — listen to input event on the hidden input
 mobileInput.addEventListener("input", (e) => {
   // only process if this was triggered by mobile input
@@ -248,6 +250,8 @@ mobileInput.addEventListener("input", (e) => {
   mobileInput.value = "";
   checks({ key: typed, preventDefault: () => {} });
 });
+
+mobileInput.addEventListener("paste", (e) => e.preventDefault());
 
 // mobile backspace fires as input with inputType deleteContentBackward
 mobileInput.addEventListener("beforeinput", (e) => {

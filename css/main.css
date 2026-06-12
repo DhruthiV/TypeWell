@@ -4,6 +4,7 @@
   font-family: "TypingFont";
   src: url("../assets/fonts/JetBrainsMono-Regular.ttf") format("truetype");
   font-weight: 400;
+  font-display: swap;
   font-style: normal;
 }
 /* Main Font */
@@ -11,6 +12,7 @@
   font-family: "MainFont";
   src: url("../assets/fonts/Inter_18pt-Regular.ttf") format("truetype");
   font-weight: 400;
+  font-display: swap;
   font-style: normal;
 }
 
