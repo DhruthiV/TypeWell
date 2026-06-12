@@ -17,11 +17,12 @@
 :root {
   --bg: #f5f5f0;
   --bg2: #faf9f7;
+  --bg3: #777675;
   --surface: #ffffff;
   --border: #e0ded8;
   --text: #1a1a18;
   --muted: #5f5e5d;
-  --muted2: #9e9d97;
+  --muted2: #777675;
   --accent: #2563eb;
   --error: #dc2626;
   --success: #16a34a;

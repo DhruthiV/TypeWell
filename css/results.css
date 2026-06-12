@@ -107,7 +107,41 @@ body {
 }
 
 .stat-info {
+  position: relative;
   cursor: pointer;
+  display: inline-block;
+}
+
+.stat-info::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 125%; /* Places the tooltip directly above the div */
+  transform: translateX(-50%) scale(0); /* Centers it and shrinks it out of sight */
+  transform-origin: bottom center;
+
+  max-width: 200px;
+  width: 100px;
+  z-index: 10;
+  background-color: var(--bg3);
+  color: var(--text2);
+  padding: 6px 10px;
+  border-radius: 4px;
+
+  font-size: 14px;
+  line-height: 1.4;
+  word-break: normal;
+  white-space: normal;
+
+  opacity: 0;
+  pointer-events: none; /* Prevents the tooltip from blocking mouse interactions */
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.stat-info:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
 }
 
 .stat-info img {
