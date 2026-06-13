@@ -45,7 +45,9 @@ document.getElementById("result-keystrokes").textContent =
 document.getElementById("result-time").textContent = result.duration + "s";
 
 //WPM Graph
-drawWpmGraph(result.wpmHistory);
+requestAnimationFrame(() => {
+  drawWpmGraph(result.wpmHistory);
+});
 
 //Keyboard Heatmap
 renderHeatmap(result.keyErrorMap);
