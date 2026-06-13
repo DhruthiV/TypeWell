@@ -2,7 +2,29 @@ import { getHistory } from "./storage.js";
 import { drawWpmGraph } from "./graph.js";
 import { renderHeatmap } from "./keyboard.js";
 import { downloadReport } from "./report.js";
-import { getModeLabel } from "./utils.js";
+import { clearToast, getModeLabel, showToast } from "./utils.js";
+
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = src;
+    script.onload = resolve;
+    script.onerror = reject;
+    document.body.append(script);
+  });
+}
+
+async function loadPdfLibs() {
+  await loadScript(
+    "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js",
+  );
+
+  await loadScript(
+    "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js",
+  );
+}
+
+loadPdfLibs();
 
 const result = JSON.parse(localStorage.getItem("latestResult"));
 
@@ -124,5 +146,13 @@ document.getElementById("btn-drill").addEventListener("click", () => {
 });
 
 document.getElementById("btn-download").addEventListener("click", async () => {
-  await downloadReport(result);
+  showToast("Generating Report ...", "info", true);
+  try {
+    await downloadReport(result);
+    clearToast();
+    showToast("Report Downloaded✓", "success");
+  } catch (err) {
+    clearToast();
+    showToast("Download failed. Try again.", "warn", true);
+  }
 });

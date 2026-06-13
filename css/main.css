@@ -149,6 +149,11 @@ nav {
   color: var(--text2);
 }
 
+.toast.success {
+  background: var(--success);
+  color: var(--text2);
+}
+
 @keyframes fallDown {
   from {
     transform: translateY(-10px);
