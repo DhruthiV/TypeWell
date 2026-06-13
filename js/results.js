@@ -24,8 +24,6 @@ async function loadPdfLibs() {
   );
 }
 
-loadPdfLibs();
-
 const result = JSON.parse(localStorage.getItem("latestResult"));
 
 if (!result) {
@@ -157,6 +155,7 @@ document.getElementById("btn-drill").addEventListener("click", () => {
 document.getElementById("btn-download").addEventListener("click", async () => {
   showToast("Generating Report ...", "info", true);
   try {
+    await loadPdfLibs();
     await downloadReport(result);
     clearToast();
     showToast("Report Downloaded✓", "success");
