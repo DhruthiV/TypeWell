@@ -14,6 +14,7 @@ import {
   MAX_FONTSIZE,
   MIN_FONTSIZE,
   showToast,
+  clearToast,
 } from "./utils.js";
 import {
   storeItemToStorage,
@@ -74,6 +75,7 @@ let characters = [];
 let spans = [];
 let currentIndex = 0;
 let lastCapsLockState;
+let isDesyncMode = false;
 
 const passageContent = document.getElementById("passage-content");
 const mobileInput = document.getElementById("mobile-input");
@@ -225,6 +227,24 @@ function checks(event) {
 
   // Normal typing
   const result = tracker.recordKeystroke(characters[currentIndex], event.key);
+
+  //Warn if user gets desynced and is no longer following the passage.
+  const isDesyncedCurrently = tracker.isDesynced();
+
+  if (isDesyncedCurrently && !isDesyncMode) {
+    isDesyncMode = true;
+    showToast(
+      "Results may be inaccurate. Re-align with the passage.",
+      "warn",
+      true,
+    );
+  }
+
+  if (!isDesyncedCurrently && isDesyncMode) {
+    isDesyncMode = false;
+    clearToast();
+  }
+
   markSpan(currentSpan, result);
 
   currentSpan.classList.remove("active");
@@ -312,6 +332,8 @@ function endTest() {
 let tabPressed = false; //used for restarting the test
 
 function resetTest(newPassage) {
+  clearToast();
+  isDesyncMode = false;
   clearTimer();
   //reset all vars
   timerStarted = false;

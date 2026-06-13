@@ -49,10 +49,10 @@ export function getModeLabel(mode) {
   return mode;
 }
 
-export function showToast(message, type = "info") {
-  const container = document.querySelector("#toast-container");
-  if (!container) return;
+const container = document.querySelector("#toast-container");
 
+export function showToast(message, type = "info", persistent = false) {
+  if (!container) return;
   //Clear the previous toast and its timer instantly if it exists
   if (activeToast) {
     activeToast.remove();
@@ -67,11 +67,22 @@ export function showToast(message, type = "info") {
 
   activeToast = toast;
 
-  toastTimeoutId = setTimeout(() => {
-    toast.remove();
-    // Only clear if this specific toast is still the active one
-    if (activeToast === toast) {
-      activeToast = null;
-    }
-  }, 3000);
+  if (!persistent) {
+    toastTimeoutId = setTimeout(() => {
+      toast.remove();
+      // Only clear if this specific toast is still the active one
+      if (activeToast === toast) {
+        activeToast = null;
+      }
+    }, 3000);
+  }
+}
+
+export function clearToast() {
+  if (!container) return;
+  if (activeToast) {
+    activeToast.remove();
+    activeToast = null;
+    clearTimeout(toastTimeoutId);
+  }
 }
