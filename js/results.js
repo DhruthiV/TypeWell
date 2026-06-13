@@ -16,11 +16,10 @@ function loadScript(src) {
 
 async function loadPdfLibs() {
   await loadScript(
-    "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js",
-  );
-
-  await loadScript(
     "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js",
+  );
+  await loadScript(
+    "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js",
   );
 }
 
@@ -43,9 +42,11 @@ document.getElementById("result-keystrokes").textContent =
 document.getElementById("result-time").textContent = result.duration + "s";
 
 //WPM Graph
-requestAnimationFrame(() => {
+const graphSection = document.getElementById("graph-section");
+const resizeObserver = new ResizeObserver(() => {
   drawWpmGraph(result.wpmHistory);
 });
+resizeObserver.observe(graphSection);
 
 //Keyboard Heatmap
 renderHeatmap(result.keyErrorMap);
