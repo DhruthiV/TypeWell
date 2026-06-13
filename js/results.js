@@ -1,4 +1,4 @@
-import { getHistory } from "./storage.js";
+import { getHistory, getBestScore } from "./storage.js";
 import { drawWpmGraph } from "./graph.js";
 import { renderHeatmap } from "./keyboard.js";
 import { downloadReport } from "./report.js";
@@ -105,7 +105,7 @@ function renderHistory() {
 
     tr.innerHTML = `
       <td>${entry.wpm}</td>
-      <td>${entry.mode}</td>
+      <td>${getModeLabel(entry.mode)}</td>
       <td>${entry.accuracy}%</td>
       <td>${entry.backspaceCount}</td>
       <td>${timeAgo(entry.timestamp)}</td>
@@ -118,6 +118,13 @@ function renderHistory() {
   container.append(table);
 }
 renderHistory();
+
+const bestScore = getBestScore("testHistory", result.mode);
+const currentScore = result.wpm * (result.accuracy / 100);
+
+if (currentScore >= bestScore && bestScore > 0) {
+  document.getElementById("personal-best-badge").style.display = "block";
+}
 
 // Weak key detection
 function getWeakKeys(keyErrorMap) {
