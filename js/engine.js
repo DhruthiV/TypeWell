@@ -173,16 +173,18 @@ function checks(event) {
 
   if (!currentSpan) return;
 
-  //Check if capslock is on
-  const currentCapsLockState = event.getModifierState("CapsLock");
-  if (currentCapsLockState !== lastCapsLockState) {
-    if (currentCapsLockState === true) {
-      showToast("Caps Lock is turned ON", "warn");
-    } else if (currentCapsLockState === false && lastCapsLockState === true) {
-      showToast("Caps Lock is turned OFF", "info");
-    }
+  //Check if capslock is on (only if the event supports it)
+  if (typeof event.getModifierState === "function") {
+    const currentCapsLockState = event.getModifierState("CapsLock");
+    if (currentCapsLockState !== lastCapsLockState) {
+      if (currentCapsLockState === true) {
+        showToast("Caps Lock is turned ON", "warn");
+      } else if (currentCapsLockState === false && lastCapsLockState === true) {
+        showToast("Caps Lock is turned OFF", "info");
+      }
 
-    lastCapsLockState = currentCapsLockState;
+      lastCapsLockState = currentCapsLockState;
+    }
   }
 
   //Block the system shortcut keys
@@ -264,7 +266,22 @@ mobileInput.addEventListener("input", (e) => {
   if (!typed) return;
 
   mobileInput.value = "";
-  checks({ key: typed, preventDefault: () => {} });
+
+  //Detect CapsLock mobile devices
+  const isUpperCase =
+    typed === typed.toUpperCase() && typed !== typed.toLowerCase();
+  const simulatedMobileCapsLock = isUpperCase && !e.shiftKey;
+
+  checks({
+    key: typed,
+    preventDefault: () => {},
+    getModifierState: (modifier) => {
+      if (modifier === "CapsLock") {
+        return simulatedMobileCapsLock;
+      }
+      return false;
+    },
+  });
 });
 
 mobileInput.addEventListener("paste", (e) => e.preventDefault());
@@ -338,11 +355,11 @@ document.addEventListener("keyup", (event) => {
   if (event.key === "Tab") tabPressed = false;
 });
 
-const refreshBtn = document.getElementById("refresh-button");
-if (refreshBtn) {
-  refreshBtn.addEventListener("click", () => {
+const restartBtn = document.getElementById("restart-button");
+if (restartBtn) {
+  restartBtn.addEventListener("click", () => {
     resetTest(true);
-    refreshBtn.blur();
+    restartBtn.blur();
 
     const passage = document.getElementById("passage");
     passage.scrollTo({

@@ -180,7 +180,7 @@ nav {
   color: var(--muted2);
 }
 
-#refresh-button {
+#restart-button {
   width: 24px;
   height: 32px;
   display: flex;
@@ -188,7 +188,7 @@ nav {
   justify-content: center;
 }
 
-#refresh-button img {
+#restart-button img {
   width: 24px;
   height: 24px;
   filter: brightness(0) saturate(100%) invert(44%) sepia(0%) saturate(7427%)
