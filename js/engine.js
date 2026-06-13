@@ -423,3 +423,17 @@ function updateButtonStates() {
   increaseFontBtn.disabled = currentSize >= MAX_FONTSIZE;
   decreaseFontBtn.disabled = currentSize <= MIN_FONTSIZE;
 }
+
+//TAB SWITCH DETECTION - RESTART TEST
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden && timerStarted && !testComplete) {
+    showToast(
+      "Test invalidated because you left the page. Restart the Test",
+      "warn",
+      true,
+    );
+
+    testComplete = true;
+    clearTimer();
+  }
+});
