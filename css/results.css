@@ -13,6 +13,40 @@ body {
   }
 }
 
+#toast-container {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 20;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.toast {
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  color: var(--text2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation: slideDown 0.3s ease forwards;
+  pointer-events: all;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-12px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 .result-data {
   font-family: "TypingFont";
 }
@@ -56,6 +90,16 @@ body {
   text-transform: uppercase;
   color: var(--text);
   margin-top: 4px;
+}
+
+#personal-best-badge {
+  display: none;
+  margin-top: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--success);
+  font-family: "MainFont";
+  letter-spacing: 0.05em;
 }
 
 #result-mode {
@@ -107,7 +151,41 @@ body {
 }
 
 .stat-info {
+  position: relative;
   cursor: pointer;
+  display: inline-block;
+}
+
+.stat-info::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 125%; /* Places the tooltip directly above the div */
+  transform: translateX(-50%) scale(0); /* Centers it and shrinks it out of sight */
+  transform-origin: bottom center;
+
+  max-width: 200px;
+  width: 100px;
+  z-index: 10;
+  background-color: var(--bg3);
+  color: var(--text2);
+  padding: 6px 10px;
+  border-radius: 4px;
+
+  font-size: 14px;
+  line-height: 1.4;
+  word-break: normal;
+  white-space: normal;
+
+  opacity: 0;
+  pointer-events: none; /* Prevents the tooltip from blocking mouse interactions */
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.stat-info:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
 }
 
 .stat-info img {
@@ -298,13 +376,13 @@ body {
 
 footer {
   margin-top: 3rem;
-  padding: 1.5rem 0;
+  padding: 1rem 0;
   border-top: 1px solid var(--border);
 
   display: flex;
   justify-content: center;
   gap: 0.75rem;
-
+  background-color: var(--surface);
   color: var(--muted2);
   font-size: 0.85rem;
 }
@@ -312,7 +390,7 @@ footer {
 /* Tablet */
 @media (max-width: 1024px) {
   .visual-row {
-    flex-direction: row;
+    flex-direction: column;
     gap: 1.5rem;
     align-items: center;
   }

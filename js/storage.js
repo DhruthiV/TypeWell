@@ -19,3 +19,13 @@ export function getHistory(key) {
 export function removeItemFromStorage(key) {
   localStorage.removeItem(key);
 }
+
+export function getBestScore(key, mode) {
+  const history = JSON.parse(localStorage.getItem(key)) || [];
+  const modeHistory = history.filter((entry) => entry.mode === mode);
+
+  if (modeHistory.length < 2) return Infinity;
+  return Math.max(
+    ...modeHistory.map((entry) => entry.wpm * (entry.accuracy / 100)),
+  );
+}

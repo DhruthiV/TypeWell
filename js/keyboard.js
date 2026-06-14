@@ -6,7 +6,6 @@ const KEYBOARD_ROWS = [
 
 function getKeyColor(key, keyErrorMap) {
   const data = keyErrorMap[key];
-  console.log(data);
   let color = "#ccc";
 
   if (!keyErrorMap[key]) {

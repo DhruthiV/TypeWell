@@ -1,5 +1,8 @@
 import { storeHistory } from "./storage.js";
 
+const DESYNC_WINDOW = 25;
+const DESYNC_THRESHOLD = 3;
+
 let correctChar = 0;
 let wrongChar = 0;
 let backspaceCount = 0;
@@ -7,6 +10,8 @@ let keystrokeLog = []; // { expected, typed, correct, time }
 let keyErrorMap = {}; //{ 'r': { attempts: 10, errors: 3 } }
 let wpmHistory = [];
 let testStartTime = null;
+//Detect Invalid Test and desynchronization
+let recentResults = [];
 
 export function recordTestStart(time) {
   testStartTime = time;
@@ -25,6 +30,11 @@ const compareCharacter = (expected, typed) => {
 export function recordKeystroke(expected, typed) {
   const result = compareCharacter(expected, typed);
 
+  recentResults.push({ correct: result === "correct", expected });
+  if (recentResults.length > DESYNC_WINDOW) {
+    recentResults.shift(); // sliding window
+  }
+
   keyErrorMap[expected] = keyErrorMap[expected] || { attempts: 0, errors: 0 };
 
   keyErrorMap[expected].attempts++;
@@ -38,6 +48,21 @@ export function recordKeystroke(expected, typed) {
   });
 
   return result;
+}
+
+// When user spams the typing
+export function isDesynced() {
+  if (recentResults.length < DESYNC_WINDOW) {
+    return false;
+  }
+
+  const nonSpaceResults = recentResults.filter(
+    (entry) => entry.expected !== " ",
+  );
+
+  const correctCount = nonSpaceResults.filter((entry) => entry.correct).length;
+
+  return correctCount <= DESYNC_THRESHOLD;
 }
 
 export function recordBackspace() {
@@ -59,7 +84,10 @@ export function getSnapshot(mode) {
     finalElapsedMinutes > 0
       ? Math.round(correctChar / 5 / finalElapsedMinutes)
       : 0;
-  const accuracy = Math.round((correctChar / (correctChar + wrongChar)) * 100);
+
+  const totalChars = correctChar + wrongChar;
+  const accuracy =
+    totalChars > 0 ? Math.round((correctChar / totalChars) * 100) : 0;
 
   const snapshot = {
     wpm: finalWpm,
@@ -85,5 +113,7 @@ export function resetTracker() {
   backspaceCount = 0;
   keystrokeLog = [];
   keyErrorMap = {};
+  recentResults = [];
+  wpmHistory = [];
   testStartTime = null;
 }
