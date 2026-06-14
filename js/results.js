@@ -1,8 +1,27 @@
-import { getHistory } from "./storage.js";
+import { getHistory, getBestScore } from "./storage.js";
 import { drawWpmGraph } from "./graph.js";
 import { renderHeatmap } from "./keyboard.js";
 import { downloadReport } from "./report.js";
-import { getModeLabel } from "./utils.js";
+import { clearToast, getModeLabel, showToast } from "./utils.js";
+
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = src;
+    script.onload = resolve;
+    script.onerror = reject;
+    document.body.append(script);
+  });
+}
+
+async function loadPdfLibs() {
+  await loadScript(
+    "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js",
+  );
+  await loadScript(
+    "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js",
+  );
+}
 
 const result = JSON.parse(localStorage.getItem("latestResult"));
 
@@ -23,7 +42,11 @@ document.getElementById("result-keystrokes").textContent =
 document.getElementById("result-time").textContent = result.duration + "s";
 
 //WPM Graph
-drawWpmGraph(result.wpmHistory);
+const graphSection = document.getElementById("graph-section");
+const resizeObserver = new ResizeObserver(() => {
+  drawWpmGraph(result.wpmHistory);
+});
+resizeObserver.observe(graphSection);
 
 //Keyboard Heatmap
 renderHeatmap(result.keyErrorMap);
@@ -81,7 +104,7 @@ function renderHistory() {
 
     tr.innerHTML = `
       <td>${entry.wpm}</td>
-      <td>${entry.mode}</td>
+      <td>${getModeLabel(entry.mode)}</td>
       <td>${entry.accuracy}%</td>
       <td>${entry.backspaceCount}</td>
       <td>${timeAgo(entry.timestamp)}</td>
@@ -94,6 +117,13 @@ function renderHistory() {
   container.append(table);
 }
 renderHistory();
+
+const bestScore = getBestScore("testHistory", result.mode);
+const currentScore = result.wpm * (result.accuracy / 100);
+
+if (currentScore >= bestScore && bestScore > 0) {
+  document.getElementById("personal-best-badge").style.display = "block";
+}
 
 // Weak key detection
 function getWeakKeys(keyErrorMap) {
@@ -124,5 +154,14 @@ document.getElementById("btn-drill").addEventListener("click", () => {
 });
 
 document.getElementById("btn-download").addEventListener("click", async () => {
-  await downloadReport(result);
+  showToast("Generating Report ...", "info", true);
+  try {
+    await loadPdfLibs();
+    await downloadReport(result);
+    clearToast();
+    showToast("Report Downloaded✓", "success");
+  } catch (err) {
+    clearToast();
+    showToast("Download failed. Try again.", "warn", true);
+  }
 });

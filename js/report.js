@@ -1,70 +1,73 @@
 import { getModeLabel } from "./utils.js";
+
 export async function downloadReport(result) {
-  const { jsPDF } = window.jspdf;
+  try {
+    const { jsPDF } = window.jspdf;
 
-  const modeLabel = getModeLabel(result.mode);
-  const weakKeyMap = {};
-  Object.entries(result.keyErrorMap).forEach(([key, data]) => {
-    if (data.attempts > 0 && data.errors / data.attempts > 0.25) {
-      weakKeyMap[key] = Math.round((data.errors / data.attempts) * 100);
+    const modeLabel = getModeLabel(result.mode);
+    const weakKeyMap = {};
+    Object.entries(result.keyErrorMap).forEach(([key, data]) => {
+      if (data.attempts > 0 && data.errors / data.attempts > 0.25) {
+        weakKeyMap[key] = Math.round((data.errors / data.attempts) * 100);
+      }
+    });
+
+    const KEYBOARD_ROWS = [
+      ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
+      ["a", "s", "d", "f", "g", "h", "j", "k", "l"],
+      ["z", "x", "c", "v", "b", "n", "m"],
+    ];
+
+    function renderKeyboardRows() {
+      return KEYBOARD_ROWS.map((row) => {
+        const keys = row
+          .map((key) => {
+            const isWeak = weakKeyMap[key] !== undefined;
+            return isWeak
+              ? `<span class="key weak">${key.toUpperCase()}<br><small>${weakKeyMap[key]}%</small></span>`
+              : `<span class="key">${key.toUpperCase()}</span>`;
+          })
+          .join("");
+        return `<div class="kb-row">${keys}</div>`;
+      }).join("");
     }
-  });
 
-  const KEYBOARD_ROWS = [
-    ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
-    ["a", "s", "d", "f", "g", "h", "j", "k", "l"],
-    ["z", "x", "c", "v", "b", "n", "m"],
-  ];
+    const spaceWeak = weakKeyMap[" "] !== undefined;
 
-  function renderKeyboardRows() {
-    return KEYBOARD_ROWS.map((row) => {
-      const keys = row
-        .map((key) => {
-          const isWeak = weakKeyMap[key] !== undefined;
-          return isWeak
-            ? `<span class="key weak">${key.toUpperCase()}<br><small>${weakKeyMap[key]}%</small></span>`
-            : `<span class="key">${key.toUpperCase()}</span>`;
-        })
+    function renderWpmSvg() {
+      if (!result.wpmHistory || result.wpmHistory.length < 2) {
+        return `<div style="color:#888680;font-size:12px;padding:16px 0;">Not enough data to draw graph.</div>`;
+      }
+      const W = 560,
+        H = 180;
+      const pad = { top: 16, right: 16, bottom: 32, left: 40 };
+      const maxWpm = Math.max(...result.wpmHistory.map((p) => p.wpm), 1);
+      const maxSec = result.wpmHistory[result.wpmHistory.length - 1].second;
+      const toX = (s) => pad.left + (s / maxSec) * (W - pad.left - pad.right);
+      const toY = (w) =>
+        pad.top + (1 - w / maxWpm) * (H - pad.top - pad.bottom);
+      const points = result.wpmHistory
+        .map((p) => `${toX(p.second)},${toY(p.wpm)}`)
+        .join(" ");
+      const yLabels = [0, Math.round(maxWpm / 2), maxWpm].map((v) => ({
+        y: toY(v),
+        label: v,
+      }));
+      const xLabels = result.wpmHistory
+        .filter(
+          (_, i) =>
+            i === 0 ||
+            i === result.wpmHistory.length - 1 ||
+            i === Math.floor(result.wpmHistory.length / 2),
+        )
+        .map((p) => ({ x: toX(p.second), label: p.second + "s" }));
+      const dots = result.wpmHistory
+        .map(
+          (p) =>
+            `<circle cx="${toX(p.second)}" cy="${toY(p.wpm)}" r="3" fill="#2563eb"/>`,
+        )
         .join("");
-      return `<div class="kb-row">${keys}</div>`;
-    }).join("");
-  }
-
-  const spaceWeak = weakKeyMap[" "] !== undefined;
-
-  function renderWpmSvg() {
-    if (!result.wpmHistory || result.wpmHistory.length < 2) {
-      return `<div style="color:#888680;font-size:12px;padding:16px 0;">Not enough data to draw graph.</div>`;
-    }
-    const W = 560,
-      H = 180;
-    const pad = { top: 16, right: 16, bottom: 32, left: 40 };
-    const maxWpm = Math.max(...result.wpmHistory.map((p) => p.wpm), 1);
-    const maxSec = result.wpmHistory[result.wpmHistory.length - 1].second;
-    const toX = (s) => pad.left + (s / maxSec) * (W - pad.left - pad.right);
-    const toY = (w) => pad.top + (1 - w / maxWpm) * (H - pad.top - pad.bottom);
-    const points = result.wpmHistory
-      .map((p) => `${toX(p.second)},${toY(p.wpm)}`)
-      .join(" ");
-    const yLabels = [0, Math.round(maxWpm / 2), maxWpm].map((v) => ({
-      y: toY(v),
-      label: v,
-    }));
-    const xLabels = result.wpmHistory
-      .filter(
-        (_, i) =>
-          i === 0 ||
-          i === result.wpmHistory.length - 1 ||
-          i === Math.floor(result.wpmHistory.length / 2),
-      )
-      .map((p) => ({ x: toX(p.second), label: p.second + "s" }));
-    const dots = result.wpmHistory
-      .map(
-        (p) =>
-          `<circle cx="${toX(p.second)}" cy="${toY(p.wpm)}" r="3" fill="#2563eb"/>`,
-      )
-      .join("");
-    return `<svg width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg">
+      return `<svg width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg">
       ${yLabels
         .map(
           (
@@ -80,12 +83,12 @@ export async function downloadReport(result) {
       <text x="${pad.left - 30}" y="${H / 2}" text-anchor="middle" font-size="10" fill="#242320" transform="rotate(-90, ${pad.left - 30}, ${H / 2})">WPM</text>
       <text x="${W / 2}" y="${H}" text-anchor="middle" font-size="10" fill="#242320">Time (s)</text>
     </svg>`;
-  }
+    }
 
-  const totalTyped = result.correctChars + result.wrongChars;
-  const summary = `The user typed ${result.correctChars} correct characters out of ${totalTyped} total in ${result.duration} seconds, making ${result.wrongChars} errors and ${result.backspaceCount} backspace corrections. Final accuracy was ${result.accuracy}% at ${result.wpm} WPM in ${modeLabel} mode.`;
+    const totalTyped = result.correctChars + result.wrongChars;
+    const summary = `The user typed ${result.correctChars} correct characters out of ${totalTyped} total in ${result.duration} seconds, making ${result.wrongChars} errors and ${result.backspaceCount} backspace corrections. Final accuracy was ${result.accuracy}% at ${result.wpm} WPM in ${modeLabel} mode.`;
 
-  const sharedCss = `
+    const sharedCss = `
     * { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
     --bg: #f5f5f0;
@@ -147,8 +150,8 @@ export async function downloadReport(result) {
     }
   `;
 
-  // PAGE 1 HTML — header + hero + summary + stats
-  const page1Html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
+    // PAGE 1 HTML — header + hero + summary + stats
+    const page1Html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
     ${sharedCss}
     .hero {
         padding: 24px 32px;  
@@ -252,8 +255,8 @@ export async function downloadReport(result) {
   </div>
   </body></html>`;
 
-  // PAGE 2 HTML — graph + keyboard
-  const page2Html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
+    // PAGE 2 HTML — graph + keyboard
+    const page2Html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
     ${sharedCss}
     .graph-section { 
         padding: 24px 32px; 
@@ -344,54 +347,62 @@ export async function downloadReport(result) {
   </div>
   </body></html>`;
 
-  // --- render helper ---
-  async function renderPageToCanvas(html) {
-    const iframe = document.createElement("iframe");
-    iframe.style.cssText =
-      "position:fixed;left:-9999px;top:0;width:720px;height:2000px;border:none;";
-    document.body.appendChild(iframe);
-    iframe.contentDocument.open();
-    iframe.contentDocument.write(html);
-    iframe.contentDocument.close();
-    await new Promise((r) => setTimeout(r, 800));
-    const body = iframe.contentDocument.body;
-    const canvas = await html2canvas(body, {
-      scale: 2,
-      useCORS: true,
-      backgroundColor: getComputedStyle(document.documentElement)
-        .getPropertyValue("--bg")
-        .trim(),
-      width: 720,
-      height: body.scrollHeight,
+    // --- render helper ---
+    async function renderPageToCanvas(html) {
+      const iframe = document.createElement("iframe");
+      iframe.style.cssText =
+        "position:fixed;left:-9999px;top:0;width:720px;height:2000px;border:none;";
+      document.body.appendChild(iframe);
+      iframe.contentDocument.open();
+      iframe.contentDocument.write(html);
+      iframe.contentDocument.close();
+      await new Promise((r) => setTimeout(r, 800));
+      const body = iframe.contentDocument.body;
+      const canvas = await html2canvas(body, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: getComputedStyle(document.documentElement)
+          .getPropertyValue("--bg")
+          .trim(),
+        width: 720,
+        height: body.scrollHeight,
+      });
+      document.body.removeChild(iframe);
+      return canvas;
+    }
+
+    // --- render both pages ---
+    const canvas1 = await renderPageToCanvas(page1Html);
+    const canvas2 = await renderPageToCanvas(page2Html);
+
+    const pdf = new jsPDF({
+      orientation: "portrait",
+      unit: "mm",
+      format: "a4",
     });
-    document.body.removeChild(iframe);
-    return canvas;
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+
+    // page 1
+    const img1 = canvas1.toDataURL("image/png");
+    const h1 = (canvas1.height * pageWidth) / canvas1.width;
+    pdf.addImage(img1, "PNG", 0, 0, pageWidth, h1);
+
+    // page 2
+    pdf.addPage();
+    const img2 = canvas2.toDataURL("image/png");
+    const h2 = (canvas2.height * pageWidth) / canvas2.width;
+    pdf.addImage(img2, "PNG", 0, 0, pageWidth, h2);
+
+    //if you think preview is required.
+    // const blob = pdf.output("blob");
+    // const url = URL.createObjectURL(blob);
+
+    // window.open(url, "_blank");
+
+    pdf.save(`typewell-report-${Date.now()}.pdf`);
+  } catch (err) {
+    console.error("Report generation failed:", err);
+    throw err;
   }
-
-  // --- render both pages ---
-  const canvas1 = await renderPageToCanvas(page1Html);
-  const canvas2 = await renderPageToCanvas(page2Html);
-
-  const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
-  const pageWidth = pdf.internal.pageSize.getWidth();
-  const pageHeight = pdf.internal.pageSize.getHeight();
-
-  // page 1
-  const img1 = canvas1.toDataURL("image/png");
-  const h1 = (canvas1.height * pageWidth) / canvas1.width;
-  pdf.addImage(img1, "PNG", 0, 0, pageWidth, h1);
-
-  // page 2
-  pdf.addPage();
-  const img2 = canvas2.toDataURL("image/png");
-  const h2 = (canvas2.height * pageWidth) / canvas2.width;
-  pdf.addImage(img2, "PNG", 0, 0, pageWidth, h2);
-
-  //if you think preview is required.
-  // const blob = pdf.output("blob");
-  // const url = URL.createObjectURL(blob);
-
-  // window.open(url, "_blank");
-
-  pdf.save(`typewell-report-${Date.now()}.pdf`);
 }

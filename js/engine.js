@@ -13,6 +13,8 @@ import {
   updateFontSize,
   MAX_FONTSIZE,
   MIN_FONTSIZE,
+  showToast,
+  clearToast,
 } from "./utils.js";
 import {
   storeItemToStorage,
@@ -72,6 +74,8 @@ let currentPassage = "";
 let characters = [];
 let spans = [];
 let currentIndex = 0;
+let lastCapsLockState;
+let isDesyncMode = false;
 
 const passageContent = document.getElementById("passage-content");
 const mobileInput = document.getElementById("mobile-input");
@@ -82,7 +86,6 @@ passageContent.addEventListener("click", () => {
 });
 
 function renderPassage(textToType) {
-  console.trace("renderPassage called");
   passageContent.innerHTML = "";
   characters = textToType.split("");
 
@@ -138,21 +141,6 @@ function showDrillResults(snapshot) {
     drillWeakKeys.length > 0 ? drillWeakKeys.join(", ") : "random practice";
 }
 
-const blockedKeys = [
-  "Shift",
-  "Control",
-  "Alt",
-  "Meta",
-  "CapsLock",
-  "Tab",
-  "Escape",
-  "ArrowUp",
-  "ArrowDown",
-  "ArrowLeft",
-  "ArrowRight",
-  "Delete",
-];
-
 const handleBackspace = (currentSpan) => {
   tracker.recordBackspace();
   currentSpan.classList.remove("active");
@@ -187,7 +175,34 @@ function checks(event) {
 
   if (!currentSpan) return;
 
-  if (blockedKeys.includes(event.key)) return;
+  //Check if capslock is on (only if the event supports it)
+  if (typeof event.getModifierState === "function") {
+    const currentCapsLockState = event.getModifierState("CapsLock");
+    if (currentCapsLockState !== lastCapsLockState) {
+      if (currentCapsLockState === true) {
+        showToast("Caps Lock is turned ON", "warn");
+      } else if (currentCapsLockState === false && lastCapsLockState === true) {
+        showToast("Caps Lock is turned OFF", "info");
+      }
+
+      lastCapsLockState = currentCapsLockState;
+    }
+  }
+
+  //Block the system shortcut keys
+  if (event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) {
+    event.preventDefault();
+    return;
+  }
+
+  const isLetter = /^[a-zA-Z]$/.test(event.key);
+  const isSpaceKey = event.key === " ";
+  //Block all the other keys except lowercase alphabets, space key and backspace
+
+  if (!isLetter && !isSpaceKey && event.key !== "Backspace") {
+    event.preventDefault();
+    return;
+  }
 
   //Start the timer when user starts typing first keypress
   if (!timerStarted) {
@@ -201,13 +216,35 @@ function checks(event) {
   }
 
   // Backspace
-  if (event.key == "Backspace" && currentIndex > 0) {
-    handleBackspace(currentSpan);
+  if (event.key === "Backspace") {
+    if (currentIndex > 0) {
+      handleBackspace(currentSpan);
+    }
+    // Prevent default browser backspace behaviors
+    event.preventDefault();
     return;
   }
 
   // Normal typing
   const result = tracker.recordKeystroke(characters[currentIndex], event.key);
+
+  //Warn if user gets desynced and is no longer following the passage.
+  const isDesyncedCurrently = tracker.isDesynced();
+
+  if (isDesyncedCurrently && !isDesyncMode) {
+    isDesyncMode = true;
+    showToast(
+      "Results may be inaccurate. Re-align with the passage.",
+      "warn",
+      true,
+    );
+  }
+
+  if (!isDesyncedCurrently && isDesyncMode) {
+    isDesyncMode = false;
+    clearToast();
+  }
+
   markSpan(currentSpan, result);
 
   currentSpan.classList.remove("active");
@@ -219,6 +256,11 @@ function checks(event) {
   }
   updateCursor();
 
+  const activeSpan = spans[currentIndex];
+  if (activeSpan) {
+    activeSpan.scrollIntoView({ block: "center", behavior: "smooth" });
+  }
+
   if (currentMode.endsWith("w")) {
     updateProgressBar(currentIndex, spans.length);
   }
@@ -229,9 +271,10 @@ function checks(event) {
 document.addEventListener("keydown", (e) => {
   // if mobile input is focused, let the input event handle it
   if (document.activeElement === mobileInput) return;
-  console.log(e);
   checks(e);
 });
+
+document.addEventListener("paste", (e) => e.preventDefault());
 
 // mobile — listen to input event on the hidden input
 mobileInput.addEventListener("input", (e) => {
@@ -243,8 +286,25 @@ mobileInput.addEventListener("input", (e) => {
   if (!typed) return;
 
   mobileInput.value = "";
-  checks({ key: typed, preventDefault: () => {} });
+
+  //Detect CapsLock mobile devices
+  const isUpperCase =
+    typed === typed.toUpperCase() && typed !== typed.toLowerCase();
+  const simulatedMobileCapsLock = isUpperCase && !e.shiftKey;
+
+  checks({
+    key: typed,
+    preventDefault: () => {},
+    getModifierState: (modifier) => {
+      if (modifier === "CapsLock") {
+        return simulatedMobileCapsLock;
+      }
+      return false;
+    },
+  });
 });
+
+mobileInput.addEventListener("paste", (e) => e.preventDefault());
 
 // mobile backspace fires as input with inputType deleteContentBackward
 mobileInput.addEventListener("beforeinput", (e) => {
@@ -264,7 +324,7 @@ function endTest() {
   if (isDrillMode) {
     showDrillResults(snapshot);
   } else {
-    window.location.href = "results.html";
+    window.location.replace("results.html");
   }
 }
 
@@ -272,6 +332,8 @@ function endTest() {
 let tabPressed = false; //used for restarting the test
 
 function resetTest(newPassage) {
+  clearToast();
+  isDesyncMode = false;
   clearTimer();
   //reset all vars
   timerStarted = false;
@@ -315,11 +377,18 @@ document.addEventListener("keyup", (event) => {
   if (event.key === "Tab") tabPressed = false;
 });
 
-const refreshBtn = document.getElementById("refresh-button");
-if (refreshBtn) {
-  refreshBtn.addEventListener("click", () => {
+const restartBtn = document.getElementById("restart-button");
+if (restartBtn) {
+  restartBtn.addEventListener("click", () => {
     resetTest(true);
-    refreshBtn.blur();
+    restartBtn.blur();
+
+    const passage = document.getElementById("passage");
+    passage.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "smooth",
+    });
   });
 }
 
@@ -354,3 +423,17 @@ function updateButtonStates() {
   increaseFontBtn.disabled = currentSize >= MAX_FONTSIZE;
   decreaseFontBtn.disabled = currentSize <= MIN_FONTSIZE;
 }
+
+//TAB SWITCH DETECTION - RESTART TEST
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden && timerStarted && !testComplete) {
+    showToast(
+      "Test invalidated because you left the page. Restart the Test",
+      "warn",
+      true,
+    );
+
+    testComplete = true;
+    clearTimer();
+  }
+});

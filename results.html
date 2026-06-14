@@ -3,8 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <meta
+      name="description"
+      content="Your TypeWell typing test results - view WPM, accuracy, key error heatmap, and download your performance report."
+    />
     <link rel="stylesheet" href="css/reset.css" />
     <link rel="stylesheet" href="css/results.css" />
     <title>TypeWell — Results</title>
@@ -13,20 +15,34 @@
     <header>
       <nav>
         <div class="logo">
-          <img src="./assets/logo.png" alt="TypeWell" height="81" />
+          <picture>
+            <source srcset="./assets/logo.webp" type="image/webp" />
+            <img
+              src="./assets/logo.png"
+              alt="TypeWell"
+              height="81"
+              width="193"
+            />
+          </picture>
         </div>
         <a href="index.html" class="try-again-btn">
-          <img src="./assets/icons/refreshIcon.svg" alt="Try Again" />
+          <img
+            src="./assets/icons/restartIcon.svg"
+            alt="Try Again"
+            width="24"
+            height="24"
+          />
         </a>
       </nav>
     </header>
-
+    <div id="toast-container"></div>
     <main id="results-main">
       <!-- Hero WPM -->
       <section id="hero-section">
         <div class="wpm-display-block">
           <span id="result-wpm" class="result-data"></span>
           <span class="wpm-label">Words per minute</span>
+          <div id="personal-best-badge">🏆 Personal Best!</div>
           <div class="mode-badge" id="result-mode"></div>
         </div>
 
@@ -35,10 +51,13 @@
           <div class="stat-card">
             <div class="stat-card-header">
               <div class="stat-label">Accuracy</div>
-              <div class="stat-info">
+              <div
+                class="stat-info"
+                data-tooltip="Percentage of correctly typed characters"
+              >
                 <img
                   src="./assets/icons/infoIcon.svg"
-                  alt="The number of correct characters user typed."
+                  alt="info"
                   width="20"
                   height="20"
                 />
@@ -49,10 +68,13 @@
           <div class="stat-card">
             <div class="stat-card-header">
               <div class="stat-label">Correct Chars</div>
-              <div class="stat-info">
+              <div
+                class="stat-info"
+                data-tooltip="Total characters typed without error"
+              >
                 <img
                   src="./assets/icons/infoIcon.svg"
-                  alt="The number of correct characters user typed."
+                  alt="info"
                   width="20"
                   height="20"
                 />
@@ -63,10 +85,13 @@
           <div class="stat-card">
             <div class="stat-card-header">
               <div class="stat-label">Wrong Characters</div>
-              <div class="stat-info">
+              <div
+                class="stat-info"
+                data-tooltip="Characters typed incorrectly"
+              >
                 <img
                   src="./assets/icons/infoIcon.svg"
-                  alt="The number of correct characters user typed."
+                  alt="info"
                   width="20"
                   height="20"
                 />
@@ -77,10 +102,13 @@
           <div class="stat-card">
             <div class="stat-card-header">
               <div class="stat-label">Backspaces</div>
-              <div class="stat-info">
+              <div
+                class="stat-info"
+                data-tooltip="Number of times you deleted a character"
+              >
                 <img
                   src="./assets/icons/infoIcon.svg"
-                  alt="The number of correct characters user typed."
+                  alt="info"
                   width="20"
                   height="20"
                 />
@@ -91,10 +119,13 @@
           <div class="stat-card">
             <div class="stat-card-header">
               <div class="stat-label">Total Keystrokes</div>
-              <div class="stat-info">
+              <div
+                class="stat-info"
+                data-tooltip="Every key pressed including backspaces"
+              >
                 <img
                   src="./assets/icons/infoIcon.svg"
-                  alt="The number of correct characters user typed."
+                  alt="info"
                   width="20"
                   height="20"
                 />
@@ -105,10 +136,10 @@
           <div class="stat-card">
             <div class="stat-card-header">
               <div class="stat-label">Time</div>
-              <div class="stat-info">
+              <div class="stat-info" data-tooltip="Total duration of the test">
                 <img
                   src="./assets/icons/infoIcon.svg"
-                  alt="The number of correct characters user typed."
+                  alt="info"
                   width="20"
                   height="20"
                 />
@@ -142,7 +173,12 @@
       <!-- Actions -->
       <section id="actions-section">
         <button id="btn-try-again" class="action-btn">
-          <img src="./assets/icons/refreshIcon.svg" alt="" />
+          <img
+            src="./assets/icons/restartIcon.svg"
+            alt="try again"
+            width="10"
+            height="10"
+          />
           <span>Try Again</span>
         </button>
 
