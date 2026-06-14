@@ -394,12 +394,12 @@ if (restartBtn) {
 
 //DRILL MODE
 document.getElementById("btn-drill-again")?.addEventListener("click", () => {
-  window.location.href = "index.html?mode=drill";
+  window.location.replace("index.html?mode=drill");
 });
 
 document.getElementById("btn-back-normal")?.addEventListener("click", () => {
   localStorage.removeItem("drillWeakKeys");
-  window.location.href = "index.html";
+  window.location.replace = "index.html";
 });
 
 //FONT

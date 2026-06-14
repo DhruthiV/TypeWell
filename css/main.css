@@ -265,6 +265,8 @@ nav {
   gap: 8px;
   flex-wrap: wrap;
   margin-top: 8px;
+  align-items: center;
+  justify-content: center;
 }
 
 .key-box {

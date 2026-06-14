@@ -16,10 +16,10 @@ function loadScript(src) {
 
 async function loadPdfLibs() {
   await loadScript(
-    "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js",
   );
   await loadScript(
-    "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js",
   );
 }
 
@@ -118,10 +118,11 @@ function renderHistory() {
 }
 renderHistory();
 
+const MIN_ACCURACY = 70;
 const bestScore = getBestScore("testHistory", result.mode);
 const currentScore = result.wpm * (result.accuracy / 100);
 
-if (currentScore >= bestScore && bestScore > 0) {
+if (currentScore >= bestScore && result.accuracy >= MIN_ACCURACY) {
   document.getElementById("personal-best-badge").style.display = "block";
 }
 
@@ -150,7 +151,7 @@ document.getElementById("btn-try-again").addEventListener("click", () => {
 document.getElementById("btn-drill").addEventListener("click", () => {
   const weakKeys = getWeakKeys(result.keyErrorMap);
   localStorage.setItem("drillWeakKeys", JSON.stringify(weakKeys));
-  window.location.href = "index.html?mode=drill";
+  window.location.replace("index.html?mode=drill");
 });
 
 document.getElementById("btn-download").addEventListener("click", async () => {
