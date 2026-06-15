@@ -258,7 +258,7 @@ function checks(event) {
 
   const activeSpan = spans[currentIndex];
   if (activeSpan) {
-    activeSpan.scrollIntoView({ block: "center", behavior: "smooth" });
+    activeSpan.scrollIntoView({ block: "nearest", behavior: "smooth" });
   }
 
   if (currentMode.endsWith("w")) {
@@ -288,9 +288,12 @@ mobileInput.addEventListener("input", (e) => {
   mobileInput.value = "";
 
   //Detect CapsLock mobile devices
+  const isLetter = /^[a-zA-Z]$/.test(typed); //excludes space and backspace in mobile
   const isUpperCase =
     typed === typed.toUpperCase() && typed !== typed.toLowerCase();
-  const simulatedMobileCapsLock = isUpperCase && !e.shiftKey;
+  const simulatedMobileCapsLock = isLetter
+    ? isUpperCase && !e.shiftKey
+    : lastCapsLockState;
 
   checks({
     key: typed,
@@ -399,7 +402,7 @@ document.getElementById("btn-drill-again")?.addEventListener("click", () => {
 
 document.getElementById("btn-back-normal")?.addEventListener("click", () => {
   localStorage.removeItem("drillWeakKeys");
-  window.location.replace = "index.html";
+  window.location.replace("index.html");
 });
 
 //FONT
