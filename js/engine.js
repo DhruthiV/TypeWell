@@ -288,9 +288,12 @@ mobileInput.addEventListener("input", (e) => {
   mobileInput.value = "";
 
   //Detect CapsLock mobile devices
+  const isLetter = /^[a-zA-Z]$/.test(typed); //excludes space and backspace in mobile
   const isUpperCase =
     typed === typed.toUpperCase() && typed !== typed.toLowerCase();
-  const simulatedMobileCapsLock = isUpperCase && !e.shiftKey;
+  const simulatedMobileCapsLock = isLetter
+    ? isUpperCase && !e.shiftKey
+    : lastCapsLockState;
 
   checks({
     key: typed,
