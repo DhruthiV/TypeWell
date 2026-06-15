@@ -258,7 +258,7 @@ function checks(event) {
 
   const activeSpan = spans[currentIndex];
   if (activeSpan) {
-    activeSpan.scrollIntoView({ block: "center", behavior: "smooth" });
+    activeSpan.scrollIntoView({ block: "nearest", behavior: "smooth" });
   }
 
   if (currentMode.endsWith("w")) {
