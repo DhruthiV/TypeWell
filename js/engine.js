@@ -402,7 +402,7 @@ document.getElementById("btn-drill-again")?.addEventListener("click", () => {
 
 document.getElementById("btn-back-normal")?.addEventListener("click", () => {
   localStorage.removeItem("drillWeakKeys");
-  window.location.replace = "index.html";
+  window.location.replace("index.html");
 });
 
 //FONT
